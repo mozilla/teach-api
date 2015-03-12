@@ -38,6 +38,9 @@ Also, `DEBUG` is enabled.
 * `SECRET_KEY` is a large random value.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
   (this should always be false in production).
+* `BROWSERID_AUTOLOGIN_EMAIL` specifies an email address to auto-login
+  as when Persona login buttons are clicked. It is useful for offline
+  development and is only valid if `DEBUG` is true.
 * `PORT` is the port that the server binds to.
 * `ORIGIN` is the origin of the server, as it appears
   to users. If `DEBUG` is enabled, this defaults to

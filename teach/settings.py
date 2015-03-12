@@ -50,6 +50,11 @@ set_default_db('sqlite:///%s' % path('db.sqlite3'))
 ORIGIN = os.environ['ORIGIN']
 
 BROWSERID_AUDIENCES = [ORIGIN]
+BROWSERID_AUTOLOGIN_ENABLED = False
+
+if DEBUG and os.environ.get('BROWSERID_AUTOLOGIN_EMAIL'):
+    BROWSERID_AUTOLOGIN_EMAIL = os.environ['BROWSERID_AUTOLOGIN_EMAIL']
+    BROWSERID_AUTOLOGIN_ENABLED = True
 
 ALLOWED_HOSTS = [urlparse.urlparse(ORIGIN).hostname]
 
@@ -76,7 +81,12 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = ()
+
+if BROWSERID_AUTOLOGIN_ENABLED:
+    AUTHENTICATION_BACKENDS += ('django_browserid.auth.AutoLoginBackend',)
+
+AUTHENTICATION_BACKENDS += (
    'django.contrib.auth.backends.ModelBackend',
    'django_browserid.auth.BrowserIDBackend',
 )
