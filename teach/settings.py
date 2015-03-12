@@ -124,3 +124,7 @@ if is_running_test_suite():
     PASSWORD_HASHERS = (
         'django.contrib.auth.hashers.MD5PasswordHasher',
     )
+
+if not DEBUG:
+    # Production deploys *must* be over HTTPS.
+    SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = True

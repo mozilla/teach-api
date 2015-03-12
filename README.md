@@ -48,6 +48,12 @@ Also, `DEBUG` is enabled.
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
 
+## Deployment
+
+It's assumed that production deploys (i.e. where `DEBUG` is false)
+are hosted over https. **The site will not work if it is hosted on
+production over http.**
+
 <!-- Links -->
 
   [twelve-factor]: http://12factor.net/
