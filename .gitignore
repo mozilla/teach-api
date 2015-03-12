@@ -1,0 +1,5 @@
+*.pyc
+staticfiles
+venv
+.env
+*.sqlite3
