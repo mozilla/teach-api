@@ -1,0 +1,9 @@
+Django==1.7.6
+dj-static==0.0.6
+gunicorn==18.0
+static3==0.5.1
+wsgiref==0.1.2
+dj-database-url==0.2.2
+
+# For tests to run...
+mock==1.0.1
