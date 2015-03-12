@@ -79,4 +79,5 @@ class PersonaTokenToAPITokenTests(TestCase):
         User.objects.create_user('foo', 'foo@example.org')
         response = self.request_with_assertion(email='foo@example.org')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json['username'], 'foo')
         self.assertRegexpMatches(response.json['token'], r'^[0-9a-f]+$')

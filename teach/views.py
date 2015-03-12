@@ -37,6 +37,7 @@ def persona_assertion_to_api_token(request, backend=None):
     token, created = Token.objects.get_or_create(user=user)
     res['content-type'] = 'application/json'
     res.content = json.dumps({
-        'token': token.key
+        'token': token.key,
+        'username': user.username
     })
     return res
