@@ -4,11 +4,15 @@ from django.contrib.auth.models import User
 from django_browserid.base import MockVerifier, VerificationResult
 
 from .. import views
+from .. import webmaker
 
-def mock_verifier(email=None):
-    def get():
-        return MockVerifier(email)
-    return get
+class FakeBrowserIDBackend(webmaker.WebmakerBrowserIDBackend):
+    def __init__(self, email):
+        super(FakeBrowserIDBackend, self).__init__()
+        self.__fake_email = email
+
+    def get_verifier(self):
+        return MockVerifier(self.__fake_email)
 
 @override_settings(API_PERSONA_ORIGINS=['http://example.org'],
                    DEBUG=False)
@@ -59,8 +63,13 @@ class PersonaTokenToAPITokenTests(TestCase):
         req = self.factory.post('/', {
             'assertion': 'foo'
         }, HTTP_ORIGIN='http://example.org')
-        return self.view(req, get_verifier=mock_verifier(email))
+        return self.view(req, backend=FakeBrowserIDBackend(email))
 
     def test_403_when_assertion_invalid(self):
         response = self.request_with_assertion(email=None)
-        self.assertEqual(response.content, 'invalid assertion')
+        self.assertEqual(response.content, 'invalid assertion or email')
+
+    def test_200_when_assertion_valid_and_account_exists(self):
+        User.objects.create_user('foo', 'foo@example.org')
+        response = self.request_with_assertion(email='foo@example.org')
+        self.assertEqual(response.status_code, 200)

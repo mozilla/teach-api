@@ -9,7 +9,7 @@ def get_verifier():
     return django_browserid.base.RemoteVerifier()
 
 @csrf_exempt
-def persona_assertion_to_api_token(request, get_verifier=get_verifier):
+def persona_assertion_to_api_token(request, backend=None):
     origin = request.META.get('HTTP_ORIGIN')
     if origin not in settings.API_PERSONA_ORIGINS:
         if not (settings.DEBUG and settings.API_PERSONA_ORIGINS == ['*']):
@@ -21,12 +21,12 @@ def persona_assertion_to_api_token(request, get_verifier=get_verifier):
         res.status_code = 400
         res.content = 'assertion required'
         return res
-    verifier = get_verifier()
-    result = verifier.verify(assertion, origin)
-    if not result:
+    if backend is None:
+        backend = webmaker.WebmakerBrowserIDBackend()
+    user = backend.authenticate(assertion=assertion, audience=origin,
+                                request=request)
+    if user is None:
         res.status_code = 403
-        res.content = 'invalid assertion'
+        res.content = 'invalid assertion or email'
         return res
-    email = result['email']
-    backend = webmaker.WebmakerBrowserIDBackend()
-    raise NotImplementedError()
+    return HttpResponse('TODO: Create token and return it')
