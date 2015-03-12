@@ -15,8 +15,9 @@ def get_verifier():
 @csrf_exempt
 def persona_assertion_to_api_token(request, backend=None):
     origin = request.META.get('HTTP_ORIGIN')
-    if origin not in settings.API_PERSONA_ORIGINS:
-        if not (settings.DEBUG and settings.API_PERSONA_ORIGINS == ['*']):
+    valid_origins = settings.CORS_API_PERSONA_ORIGINS
+    if origin not in valid_origins:
+        if not (settings.DEBUG and valid_origins == ['*']):
             return HttpResponse('invalid origin', status=403)
     res = HttpResponse()
     res['access-control-allow-origin'] = origin
