@@ -47,3 +47,7 @@ Also, `DEBUG` is enabled.
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
+
+<!-- Links -->
+
+  [twelve-factor]: http://12factor.net/
