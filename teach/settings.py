@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import sys
+import urlparse
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -42,10 +43,15 @@ DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
 
 PORT = int(os.environ['PORT'])
 
+if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
+
 set_default_db('sqlite:///%s' % path('db.sqlite3'))
 
-# TODO: Explicitly specify allowed hosts here.
-ALLOWED_HOSTS = ['*']
+ORIGIN = os.environ['ORIGIN']
+
+BROWSERID_AUDIENCES = [ORIGIN]
+
+ALLOWED_HOSTS = [urlparse.urlparse(ORIGIN).hostname]
 
 # Application definition
 
@@ -56,6 +62,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_browserid',
+    'example',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -66,6 +74,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+AUTHENTICATION_BACKENDS = (
+   'django.contrib.auth.backends.ModelBackend',
+   'django_browserid.auth.BrowserIDBackend',
 )
 
 ROOT_URLCONF = 'teach.urls'
@@ -100,6 +113,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = path('staticfiles')
+
+LOGIN_REDIRECT_URL = '/'
 
 # TODO: Mail admins on error.
 LOGGING = {
