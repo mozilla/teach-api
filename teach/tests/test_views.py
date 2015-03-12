@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 from django.contrib.auth.models import User
@@ -63,7 +64,10 @@ class PersonaTokenToAPITokenTests(TestCase):
         req = self.factory.post('/', {
             'assertion': 'foo'
         }, HTTP_ORIGIN='http://example.org')
-        return self.view(req, backend=FakeBrowserIDBackend(email))
+        response = self.view(req, backend=FakeBrowserIDBackend(email))
+        if response['Content-Type'] == 'application/json':
+            response.json = json.loads(response.content)
+        return response
 
     def test_403_when_assertion_invalid(self):
         response = self.request_with_assertion(email=None)
@@ -73,3 +77,4 @@ class PersonaTokenToAPITokenTests(TestCase):
         User.objects.create_user('foo', 'foo@example.org')
         response = self.request_with_assertion(email='foo@example.org')
         self.assertEqual(response.status_code, 200)
+        self.assertRegexpMatches(response.json['token'], r'^[0-9a-f]+$')

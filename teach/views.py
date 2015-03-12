@@ -1,7 +1,9 @@
+import json
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import django_browserid.base
+from rest_framework.authtoken.models import Token
 
 from . import webmaker
 
@@ -29,4 +31,7 @@ def persona_assertion_to_api_token(request, backend=None):
         res.status_code = 403
         res.content = 'invalid assertion or email'
         return res
-    return HttpResponse('TODO: Create token and return it')
+    token, created = Token.objects.get_or_create(user=user)
+    return HttpResponse(json.dumps({
+        'token': token.key
+    }), content_type='application/json')
