@@ -2,6 +2,7 @@ import json
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 import django_browserid.base
 from rest_framework.authtoken.models import Token
 
@@ -10,6 +11,7 @@ from . import webmaker
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
 
+@require_POST
 @csrf_exempt
 def persona_assertion_to_api_token(request, backend=None):
     origin = request.META.get('HTTP_ORIGIN')
