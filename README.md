@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mozilla/teach-api.svg)](https://travis-ci.org/mozilla/teach-api)
+
 This is a backend data store with a REST API for use by the
 [teach website][teach].
 
