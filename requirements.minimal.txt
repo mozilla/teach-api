@@ -9,3 +9,4 @@ requests==2.5.3
 
 # For tests to run...
 mock==1.0.1
+httmock==1.2.2

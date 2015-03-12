@@ -6,7 +6,9 @@
   <body>
     {% browserid_info %}
     {% if user.is_authenticated %}
-      <p>Current user: {{ user.email }}</p>
+      <p>Current user: {{ user.email }} /
+        <a href="https://webmaker.org/en-US/search?type=user&amp;q={{ user.username }}">@{{ user.username }}</a>
+      </p>
       {% browserid_logout text='Logout' %}
     {% else %}
       {% browserid_login text='Login' color='dark' %}

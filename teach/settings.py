@@ -31,6 +31,9 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         PORT='8000',
     )
 
+LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
+LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
+
 if 'SECURE_PROXY_SSL_HEADER' in os.environ:
     SECURE_PROXY_SSL_HEADER = parse_secure_proxy_ssl_header(
         os.environ['SECURE_PROXY_SSL_HEADER']
@@ -88,7 +91,7 @@ if BROWSERID_AUTOLOGIN_ENABLED:
 
 AUTHENTICATION_BACKENDS += (
    'django.contrib.auth.backends.ModelBackend',
-   'django_browserid.auth.BrowserIDBackend',
+   'teach.webmaker.WebmakerBrowserIDBackend',
 )
 
 ROOT_URLCONF = 'teach.urls'

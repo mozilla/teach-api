@@ -53,6 +53,11 @@ Also, `DEBUG` is enabled.
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
+* `LOGINAPI_URL` is the URL of the Webmaker login API server.
+  Defaults to `https://login.webmaker.org`.
+* `LOGINAPI_AUTH` is the *username:password* pair that will be
+  used to authenticate with the Webmaker login server, e.g.
+  `john:1234`.
 
 ## Deployment
 
