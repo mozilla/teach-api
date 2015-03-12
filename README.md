@@ -1,3 +1,6 @@
+This is a backend data store with a REST API for use by the
+[teach website][teach].
+
 ## Requirements
 
 * Python 2.7
@@ -67,4 +70,5 @@ production over http.**
 
 <!-- Links -->
 
+  [teach]: https://github.com/mozilla/teach.webmaker.org
   [twelve-factor]: http://12factor.net/
