@@ -16,7 +16,7 @@ def get_verifier():
 def persona_assertion_to_api_token(request, backend=None):
     origin = request.META.get('HTTP_ORIGIN')
     valid_origins = settings.CORS_API_PERSONA_ORIGINS
-    if origin not in valid_origins:
+    if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
             return HttpResponse('invalid origin', status=403)
     res = HttpResponse()
@@ -35,6 +35,8 @@ def persona_assertion_to_api_token(request, backend=None):
         res.content = 'invalid assertion or email'
         return res
     token, created = Token.objects.get_or_create(user=user)
-    return HttpResponse(json.dumps({
+    res['content-type'] = 'application/json'
+    res.content = json.dumps({
         'token': token.key
-    }), content_type='application/json')
+    })
+    return res

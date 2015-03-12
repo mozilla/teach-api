@@ -9,6 +9,8 @@ urlpatterns = patterns('',
     # url(r'^$', 'teach.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    url(r'^api/auth/persona$',
+        'teach.views.persona_assertion_to_api_token'),
     url(r'^$', 'example.views.login'),
     url(r'', include('django_browserid.urls')),
     url(r'^admin/', include(teach_admin.urls)),

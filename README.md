@@ -38,7 +38,7 @@ string), the boolean is true; otherwise, it's false.
 
 **Note:** When running `manage.py`, the following environment
 variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
-Also, `DEBUG` is enabled.
+`CORS_API_PERSONA_ORIGINS`. Also, `DEBUG` is enabled.
 
 * `SECRET_KEY` is a large random value.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
@@ -63,6 +63,10 @@ Also, `DEBUG` is enabled.
 * `LOGINAPI_AUTH` is the *username:password* pair that will be
   used to authenticate with the Webmaker login server, e.g.
   `john:1234`.
+* `CORS_API_PERSONA_ORIGINS` is a comma-separated list of origins that
+  can submit Persona assertions to the API server in exchange for API
+  tokens. This list should not contain any whitespace. If `DEBUG` is
+  enabled, any origin can submit Persona assertions.
 
 ## Deployment
 

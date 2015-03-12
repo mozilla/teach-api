@@ -28,6 +28,7 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         DEBUG='indeed',
         # TODO: Support any alternative port passed-in from the command-line.
         PORT='8000',
+        CORS_API_PERSONA_ORIGINS='*'
     )
 
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
@@ -156,6 +157,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+CORS_API_PERSONA_ORIGINS = os.environ.get(
+    'CORS_API_PERSONA_ORIGINS',
+    ''
+).split(',')
 
 if is_running_test_suite():
     PASSWORD_HASHERS = (

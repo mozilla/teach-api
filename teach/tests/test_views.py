@@ -65,6 +65,8 @@ class PersonaTokenToAPITokenTests(TestCase):
             'assertion': 'foo'
         }, HTTP_ORIGIN='http://example.org')
         response = self.view(req, backend=FakeBrowserIDBackend(email))
+        self.assertEqual(response['access-control-allow-origin'],
+                         'http://example.org')
         if response['Content-Type'] == 'application/json':
             response.json = json.loads(response.content)
         return response
