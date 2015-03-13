@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django_browserid',
     'rest_framework',
     'rest_framework.authtoken',
+    'clubs',
     'example',
 )
 
