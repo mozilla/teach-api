@@ -20,7 +20,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 class ClubSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Club
-        fields = ('name', 'website', 'description', 'location',
+        fields = ('url', 'name', 'website', 'description', 'location',
                   'latitude', 'longitude')
 
 class ClubViewSet(viewsets.ModelViewSet):
