@@ -24,11 +24,17 @@ class Club(models.Model):
     )
 
     latitude = models.FloatField(
-        help_text="Latitude of the club."
+        help_text=("Latitude of the club. "
+                   "Leave blank to automatically determine."),
+        blank=True,
+        null=True
     )
 
     longitude = models.FloatField(
-        help_text="Longitude of the club."
+        help_text=("Longitude of the club."
+                   "Leave blank to automatically determine."),
+        blank=True,
+        null=True
     )
 
     is_active = models.BooleanField(
