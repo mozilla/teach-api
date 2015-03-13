@@ -44,9 +44,15 @@ def persona_assertion_to_api_token(request, backend=None):
     return res
 
 def api_introduction(request):
+    if request.user.is_authenticated():
+        token, created = Token.objects.get_or_create(user=request.user)
+        token = token.key
+    else:
+        token = '0eafe9fb9111e93bdc67a899623365a21f69065b'
     return render(request, 'teach/api-introduction.html', {
         'ORIGIN': settings.ORIGIN,
-        'CORS_API_PERSONA_ORIGINS': settings.CORS_API_PERSONA_ORIGINS
+        'CORS_API_PERSONA_ORIGINS': settings.CORS_API_PERSONA_ORIGINS,
+        'token': token
     })
 
 # This is a really weird way of defining our own API root docs, but

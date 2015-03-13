@@ -5,6 +5,7 @@
 <meta charset="utf-8">
 <link rel="stylesheet" href="//google-code-prettify.googlecode.com/svn/trunk/styles/desert.css">
 <link rel="stylesheet" href="{% static 'css/bootswatch-cerulean.min.css' %}">
+{% browserid_css %}
 <style>
 code {
   background: #f0f0f0;
@@ -20,12 +21,25 @@ body pre.prettyprint {
 }
 </style>
 <title>Mozilla Learning API Introduction</title>
+{% browserid_info %}
 <div class="container">
   <h1>Mozilla Learning API Introduction</h1>
+
+  <div class="alert alert-info">
+    {% if user.is_authenticated %}
+    <strong>Note:</strong> Example code below contains the actual API token for <code>{{ user.username }}</code>, which you can copy-paste into your terminal or editor to experiment with the API. To disable this feature, you can {% browserid_logout text='logout' %}.
+    {% else %}
+    <strong>Note:</strong> If you login using the button below, the example code below will show your own API token, which you can copy-paste into your terminal or editor to experiment with the API.
+
+    <div style="padding-top: 1em">{% browserid_login text='Login with Webmaker' color='dark' %}</div>
+    {% endif %}
+  </div>
+
   <p>You can browse the self-documenting API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
   <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
-  <h2>Authenticating</h2>
-  <p>Currently, authentication is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
+  <h2>Obtaining An Authentication Token</h2>
+  <p>Before you can make an authenticated request on the behalf of your user, you need to obtain an <strong>authentication token</strong> for them.</p>
+  <p>Currently, this is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
   <pre class="prettyprint">navigator.id.get(function(assertion) {
   if (!assertion) return; /* User aborted Persona login. */
   var req = new XMLHttpRequest();
@@ -56,16 +70,29 @@ body pre.prettyprint {
     will get an HTTP 403 with a response text of <code>invalid origin</code>.</p>
   <p>If the assertion is expired, malformed, or belongs to an email address that doesn't have a <a href="https://webmaker.org/">Webmaker</a> account associated with it, you will get an HTTP 403 with a response text of <code>invalid assertion or email</code>.</p>
   <h3>Authentication Success</h3>
-  <p>If the assertion succeeds, you will get an HTTP 200 with a JSON response that looks like this:</p>
-  <pre class="prettyprint">{
-  "username": "foo",
-  "token": "0eafe9fb9111e93bdc67a899623365a21f69065b"
-}</pre>
-  <p><code>username</code> is the user's Webmaker username, and <code>token</code> can be used to make authenticated requests.</p>
+  <p>If the assertion succeeds, you will get an HTTP 200 with a JSON response having the following keys:</p>
+  <ul>
+    <li><code>username</code> is the user's Webmaker username.</li>
+    <li><code>token</code> is a hexadecimal string that can be used to make authenticated requests.</li>
+  </ul>
   <h2>Making Authenticated Requests</h2>
-  <p>To make authenticated requests, the token key should be included in the <code>Authorization</code> HTTP header. The key should be prefixed by the string literal "Token", with whitespace separating the two strings. For example:
-  <pre>Authorization: Token 0eafe9fb9111e93bdc67a899623365a21f69065b</pre>
+
+  <p>To make authenticated requests, the token key should be included in the <code>Authorization</code> HTTP header. The key should be prefixed by the string literal "Token", with whitespace separating the two strings.</p>
+
+  {% if user.is_authenticated %}
+  <p>For example, to make an API request as <code>{{ user.username }}</code>, use the following header:</p>
+  {% else %}
+  <p>For example:</p>
+  {% endif %}
+
+  <pre>Authorization: Token {{ token }}</pre>
+
   <h2>Further Information</h2>
+
+  <p>Hopefully, viewing the self-documenting API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a> can answer most of your questions.</p>
+
   <p>Source code for the API can be found on <a href="https://github.com/mozilla/teach-api">GitHub</a>. Feel free to file an <a href="https://github.com/mozilla/teach-api/issues">issue</a> if you need help with anything.</p>
 </div>
+<script src="{% static 'rest_framework/js/jquery-1.8.1-min.js' %}"></script>
+{% browserid_js %}
 <script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>

@@ -16,15 +16,26 @@ class FakeBrowserIDBackend(webmaker.WebmakerBrowserIDBackend):
         return MockVerifier(self.__fake_email)
 
 class ViewSmokeTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def login(self):
+        User.objects.create_user('foo', 'foo@example.org', 'pass')
+        self.assertTrue(self.client.login(username='foo',
+                                          password='pass'))
+
     def verify_200(self, url):
-        c = Client()
-        response = c.get(url)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_api_root(self):
         self.verify_200('/api/')
 
     def test_api_introduction(self):
+        self.verify_200('/api-introduction/')
+
+    def test_authenticated_api_introduction(self):
+        self.login()
         self.verify_200('/api-introduction/')
 
 class CorsTests(TestCase):
