@@ -22,7 +22,7 @@ body pre.prettyprint {
 <title>API Introduction</title>
 <div class="container">
   <h1>API Introduction</h1>
-  <p>You can browse the API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
+  <p>You can browse the self-documenting API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
   <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
   <h2>Authenticating</h2>
   <p>Currently, authentication is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
@@ -51,15 +51,20 @@ body pre.prettyprint {
     </li>
     {% endfor %}
   </ul>
+  <h3>Authentication Failure</h3>
   <p>If the assertion doesn't come from one of the above origins, you
     will get an HTTP 403 with a response text of <code>invalid origin</code>.</p>
   <p>If the assertion is expired, malformed, or belongs to an email address that doesn't have a <a href="https://webmaker.org/">Webmaker</a> account associated with it, you will get an HTTP 403 with a response text of <code>invalid assertion or email</code>.</p>
+  <h3>Authentication Success</h3>
   <p>If the assertion succeeds, you will get an HTTP 200 with a JSON response that looks like this:</p>
   <pre class="prettyprint">{
   "username": "foo",
   "token": "0eafe9fb9111e93bdc67a899623365a21f69065b"
 }</pre>
   <p><code>username</code> is the user's Webmaker username, and <code>token</code> can be used to make authenticated requests.</p>
+  <h2>Making Authenticated Requests</h2>
+  <p>To make authenticated requests, the token key should be included in the <code>Authorization</code> HTTP header. The key should be prefixed by the string literal "Token", with whitespace separating the two strings. For example:
+  <pre>Authorization: Token 0eafe9fb9111e93bdc67a899623365a21f69065b</pre>
   <h2>Further Information</h2>
   <p>Source code for the API can be found on <a href="https://github.com/mozilla/teach-api">GitHub</a>. Feel free to file an <a href="https://github.com/mozilla/teach-api/issues">issue</a> if you need help with anything.</p>
 </div>
