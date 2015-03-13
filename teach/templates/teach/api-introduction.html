@@ -3,6 +3,7 @@
 
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link rel="stylesheet" href="//google-code-prettify.googlecode.com/svn/trunk/styles/desert.css">
 <link rel="stylesheet" href="{% static 'css/bootswatch-cerulean.min.css' %}">
 <style>
 code {
@@ -13,10 +14,29 @@ code {
 .api-path {
   font-family: monospace;
 }
+
+body pre.prettyprint {
+  padding: 8px;
+}
 </style>
 <title>API Introduction</title>
 <div class="container">
   <h1>API Introduction</h1>
   <p>You can browse the API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
   <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
+  <h2>Authenticating</h2>
+  <p>Currently, authentication is done by submitting a Persona assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> as follows:</p>
+  <pre class="prettyprint">navigator.id.get(function(assertion) {
+  if (!assertion) return;
+  var req = new XMLHttpRequest();
+  req.open('POST', '{{ ORIGIN }}{% url 'teach.views.persona_assertion_to_api_token' %}');
+  req.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+  req.onload = function() {
+    console.log(req.responseText);
+  };
+  req.send('assertion=' + encodeURIComponent(assertion));
+});</pre>
+  <h2>Further Information</h2>
+  <p>Source code for the API can be found on <a href="https://github.com/mozilla/teach-api">GitHub</a>. Feel free to file an <a href="https://github.com/mozilla/teach-api/issues">issue</a> if you need help with anything.</p>
 </div>
+<script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
