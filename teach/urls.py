@@ -1,14 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
-from rest_framework import routers
 
 from .admin import site as teach_admin
 teach_admin.copy_registry(admin.site)
 
+from .views import TeachRouter
 from clubs.views import ClubViewSet
 
-router = routers.DefaultRouter()
+router = TeachRouter()
 router.register(r'clubs', ClubViewSet)
 
 urlpatterns = patterns('',

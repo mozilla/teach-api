@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import django_browserid.base
+from rest_framework import routers
 from rest_framework.authtoken.models import Token
 
 from . import webmaker
@@ -27,8 +28,7 @@ def persona_assertion_to_api_token(request, backend=None):
         res.status_code = 400
         res.content = 'assertion required'
         return res
-    if backend is None:
-        backend = webmaker.WebmakerBrowserIDBackend()
+    if backend is None: backend = webmaker.WebmakerBrowserIDBackend()
     user = backend.authenticate(assertion=assertion, audience=origin,
                                 request=request)
     if user is None:
@@ -48,3 +48,25 @@ def api_introduction(request):
         'ORIGIN': settings.ORIGIN,
         'CORS_API_PERSONA_ORIGINS': settings.CORS_API_PERSONA_ORIGINS
     })
+
+# This is a really weird way of defining our own API root docs, but
+# it seems to be the only known one: http://stackoverflow.com/q/17496249
+class TeachRouter(routers.DefaultRouter):
+    def get_api_root_view(self):
+        api_root_view = super(TeachRouter, self).get_api_root_view()
+        ApiRootClass = api_root_view.cls
+
+        class APIRoot(ApiRootClass):
+            """
+            This is the root of the Mozilla Learning API. Follow
+            links below to explore the documentation.
+
+            You can also view the [API Introduction][intro] to
+            learn how to authenticate with the API if needed.
+
+              [intro]: /api-introduction/
+            """
+
+            pass
+
+        return APIRoot.as_view()
