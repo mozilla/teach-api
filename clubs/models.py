@@ -1,4 +1,5 @@
 from django.db import models
+from geopy.geocoders import Nominatim
 
 class Club(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -36,3 +37,10 @@ class Club(models.Model):
                   "clubs.",
         default=True
     )
+
+    def geocode(self):
+        geolocator = Nominatim()
+        loc = geolocator.geocode(self.location)
+        if loc is not None:
+            self.latitude = loc.latitude
+            self.longitude = loc.longitude
