@@ -6,9 +6,9 @@ class Club(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-    creator = models.ForeignKey(
+    owner = models.ForeignKey(
         User,
-        help_text="The user who created the Club."
+        help_text="The user who owns the Club and can change it."
     )
 
     name = models.CharField(
