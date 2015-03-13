@@ -57,3 +57,18 @@ class Club(models.Model):
         if loc is not None:
             self.latitude = loc.latitude
             self.longitude = loc.longitude
+
+    def save(self, *args, **kwargs):
+        geolocator = None
+        if 'geolocator' in kwargs:
+            geolocator = kwargs['geolocator']
+            del kwargs['geolocator']
+        if (self.location and
+            self.latitude is None and
+            self.longitude is None):
+            try:
+                self.geocode(geolocator)
+            except Exception:
+                pass
+
+        super(Club, self).save(*args, **kwargs)
