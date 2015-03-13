@@ -45,5 +45,6 @@ def persona_assertion_to_api_token(request, backend=None):
 
 def api_introduction(request):
     return render(request, 'teach/api-introduction.html', {
-        'ORIGIN': settings.ORIGIN
+        'ORIGIN': settings.ORIGIN,
+        'CORS_API_PERSONA_ORIGINS': settings.CORS_API_PERSONA_ORIGINS
     })

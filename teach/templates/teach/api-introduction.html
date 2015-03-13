@@ -25,17 +25,32 @@ body pre.prettyprint {
   <p>You can browse the API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
   <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
   <h2>Authenticating</h2>
-  <p>Currently, authentication is done by submitting a Persona assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> as follows:</p>
+  <p>Currently, authentication is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
   <pre class="prettyprint">navigator.id.get(function(assertion) {
   if (!assertion) return;
   var req = new XMLHttpRequest();
   req.open('POST', '{{ ORIGIN }}{% url 'teach.views.persona_assertion_to_api_token' %}');
   req.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
   req.onload = function() {
-    console.log(req.responseText);
+    if (req.status == 200) {
+      var info = JSON.parse(req.responseText);
+      console.log(info.username + " logged in.");
+      // Use info.token for future authenticated requests.
+    } else {
+      console.log("Got HTTP " + req.status + " :" + req.responseText);
+    }
   };
   req.send('assertion=' + encodeURIComponent(assertion));
 });</pre>
+  <p>Note that in order for authentication to succeed, the assertion <em>must</em> come from one of the following origins:</p>
+  <ul>
+    {% for origin in CORS_API_PERSONA_ORIGINS %}
+    <li>
+      <code>{{ origin }}</code>
+      {% if origin == '*' %}(i.e., any origin, supported only on deploys with <code>DEBUG</code> enabled){% endif %}
+    </li>
+    {% endfor %}
+  </ul>
   <h2>Further Information</h2>
   <p>Source code for the API can be found on <a href="https://github.com/mozilla/teach-api">GitHub</a>. Feel free to file an <a href="https://github.com/mozilla/teach-api/issues">issue</a> if you need help with anything.</p>
 </div>
