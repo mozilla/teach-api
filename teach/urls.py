@@ -16,8 +16,11 @@ urlpatterns = patterns('',
     # url(r'^$', 'teach.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^api/auth/persona$',
+    # We intentionally don't want this under /api/, as it
+    # has a different CORS policy than the rest of the API.
+    url(r'^auth/persona$',
         'teach.views.persona_assertion_to_api_token'),
+
     url(r'^api/', include(router.urls)),
     url(r'^$', RedirectView.as_view(url='/api/')),
     url(r'', include('django_browserid.urls')),

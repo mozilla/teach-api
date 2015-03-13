@@ -1,5 +1,5 @@
 import json
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django.contrib.auth.models import User
 from django_browserid.base import MockVerifier, VerificationResult
@@ -14,6 +14,17 @@ class FakeBrowserIDBackend(webmaker.WebmakerBrowserIDBackend):
 
     def get_verifier(self):
         return MockVerifier(self.__fake_email)
+
+class CorsTests(TestCase):
+    def test_api_paths_have_cors_enabled(self):
+        c = Client()
+        response = c.get('/api/', HTTP_ORIGIN='http://foo.org')
+        self.assertEqual(response['access-control-allow-origin'], '*')
+
+    def test_non_api_paths_have_cors_disabled(self):
+        c = Client()
+        response = c.get('/admin/', HTTP_ORIGIN='http://foo.org')
+        self.assertFalse('access-control-allow-origin' in response)
 
 @override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
                    DEBUG=False)

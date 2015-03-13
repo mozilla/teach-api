@@ -71,12 +71,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_browserid',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'clubs',
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -161,6 +163,9 @@ REST_FRAMEWORK = {
 TEMPLATE_DIRS = (
     path('teach', 'templates'),
 )
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
 
 CORS_API_PERSONA_ORIGINS = os.environ.get(
     'CORS_API_PERSONA_ORIGINS',
