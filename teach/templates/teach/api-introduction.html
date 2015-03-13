@@ -27,7 +27,7 @@ body pre.prettyprint {
   <h2>Authenticating</h2>
   <p>Currently, authentication is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
   <pre class="prettyprint">navigator.id.get(function(assertion) {
-  if (!assertion) return;
+  if (!assertion) return; /* User aborted Persona login. */
   var req = new XMLHttpRequest();
   req.open('POST', '{{ ORIGIN }}{% url 'teach.views.persona_assertion_to_api_token' %}');
   req.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
@@ -51,6 +51,15 @@ body pre.prettyprint {
     </li>
     {% endfor %}
   </ul>
+  <p>If the assertion doesn't come from one of the above origins, you
+    will get an HTTP 403 with a response text of <code>invalid origin</code>.</p>
+  <p>If the assertion is expired, malformed, or belongs to an email address that doesn't have a <a href="https://webmaker.org/">Webmaker</a> account associated with it, you will get an HTTP 403 with a response text of <code>invalid assertion or email</code>.</p>
+  <p>If the assertion succeeds, you will get an HTTP 200 with a JSON response that looks like this:</p>
+  <pre class="prettyprint">{
+  "username": "foo",
+  "token": "0eafe9fb9111e93bdc67a899623365a21f69065b"
+}</pre>
+  <p><code>username</code> is the user's Webmaker username, and <code>token</code> can be used to make authenticated requests.</p>
   <h2>Further Information</h2>
   <p>Source code for the API can be found on <a href="https://github.com/mozilla/teach-api">GitHub</a>. Feel free to file an <a href="https://github.com/mozilla/teach-api/issues">issue</a> if you need help with anything.</p>
 </div>
