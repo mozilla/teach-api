@@ -1,0 +1,22 @@
+{% load browserid %}
+{% load static %}
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="{% static 'css/bootswatch-cerulean.min.css' %}">
+<style>
+code {
+  background: #f0f0f0;
+  color: #333333;
+}
+
+.api-path {
+  font-family: monospace;
+}
+</style>
+<title>API Introduction</title>
+<div class="container">
+  <h1>API Introduction</h1>
+  <p>You can browse the API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
+  <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
+</div>

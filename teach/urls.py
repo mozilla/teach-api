@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     url(r'^auth/persona$',
         'teach.views.persona_assertion_to_api_token'),
 
+    url(r'^api-introduction/', 'teach.views.api_introduction',
+        name='api-introduction'),
     url(r'^api/', include(router.urls)),
     url(r'^$', RedirectView.as_view(url='/api/')),
     url(r'', include('django_browserid.urls')),

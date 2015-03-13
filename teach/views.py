@@ -1,4 +1,5 @@
 import json
+from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -41,3 +42,6 @@ def persona_assertion_to_api_token(request, backend=None):
         'username': user.username
     })
     return res
+
+def api_introduction(request):
+    return render(request, 'teach/api-introduction.html')

@@ -28,6 +28,9 @@
   {% browserid_info %}
   {% if user.is_authenticated %}
     <li class="navbar-text"><small>Logged in as {{ user.username }}</small></li>
+  {% endif %}
+  <li><a href="{% url 'api-introduction' %}">API Intro</a></li>
+  {% if user.is_authenticated %}
     {% if user.is_staff %}
       <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
     {% endif %}
