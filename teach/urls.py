@@ -1,8 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from rest_framework import routers
 
 from .admin import site as teach_admin
 teach_admin.copy_registry(admin.site)
+
+from clubs.views import ClubViewSet
+
+router = routers.DefaultRouter()
+router.register(r'clubs', ClubViewSet)
 
 urlpatterns = patterns('',
     # Examples:
@@ -13,5 +19,6 @@ urlpatterns = patterns('',
         'teach.views.persona_assertion_to_api_token'),
     url(r'^$', 'example.views.login'),
     url(r'', include('django_browserid.urls')),
+    url(r'^', include(router.urls)),
     url(r'^admin/', include(teach_admin.urls)),
 )
