@@ -37,7 +37,7 @@ class Club(models.Model):
     )
 
     longitude = models.FloatField(
-        help_text=("Longitude of the club."
+        help_text=("Longitude of the club. "
                    "Leave blank to automatically determine."),
         blank=True,
         null=True
