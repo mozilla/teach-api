@@ -1,9 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
 from geopy.geocoders import Nominatim
 
 class Club(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+
+    creator = models.ForeignKey(
+        User,
+        help_text="The user who created the Club."
+    )
 
     name = models.CharField(
         help_text="The name of the club.",
