@@ -15,6 +15,18 @@ class FakeBrowserIDBackend(webmaker.WebmakerBrowserIDBackend):
     def get_verifier(self):
         return MockVerifier(self.__fake_email)
 
+class ViewSmokeTests(TestCase):
+    def verify_200(self, url):
+        c = Client()
+        response = c.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_api_root(self):
+        self.verify_200('/api/')
+
+    def test_api_introduction(self):
+        self.verify_200('/api-introduction/')
+
 class CorsTests(TestCase):
     def test_api_paths_have_cors_enabled(self):
         c = Client()
