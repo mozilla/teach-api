@@ -15,6 +15,11 @@ def mock_geolocator(latitude=None, longitude=None):
         geolocator.geocode.return_value = loc
     return geolocator
 
+class ClubTests(TestCase):
+    def test_stringify_works(self):
+        c = Club(name='Bop')
+        self.assertEqual(str(c), 'Bop')
+
 class ClubSaveTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('foo', 'foo@example.org')

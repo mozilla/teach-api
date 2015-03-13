@@ -50,6 +50,9 @@ class Club(models.Model):
         default=True
     )
 
+    def __unicode__(self):
+        return self.name
+
     def geocode(self, geolocator=None):
         if geolocator is None:
             geolocator = Nominatim()
