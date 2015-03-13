@@ -1,8 +1,24 @@
 {% extends "rest_framework/base.html" %}
 
+{% load static %}
 {% load browserid %}
 
 {% block title %}Mozilla Learning API{% endblock %}
+
+{% block bootstrap_theme %}
+  <link rel="stylesheet" href="{% static 'css/bootswatch-cerulean.min.css' %}">
+  <style>
+  body .navbar a, body .navbar .navbar-text {
+    color: white;
+  }
+
+  body .navbar li a:hover, body .navbar li a:focus {
+    background: rgba(0, 0, 0, 0.25);
+  }
+  </style>
+{% endblock %}
+
+{% block bootstrap_navbar_variant %}{% endblock %}
 
 {% block branding %}
   <a class="navbar-brand" href="/">Mozilla Learning API</a>

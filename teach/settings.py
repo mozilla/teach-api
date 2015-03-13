@@ -160,6 +160,10 @@ REST_FRAMEWORK = {
     ]
 }
 
+STATICFILES_DIRS = (
+    path('teach', 'static'),
+)
+
 TEMPLATE_DIRS = (
     path('teach', 'templates'),
 )
