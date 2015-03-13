@@ -24,12 +24,8 @@
   <a class="navbar-brand" href="/">Mozilla Learning API</a>
 {% endblock %}
 
-{% block body %}
-  {% browserid_info %}
-  {{ block.super }}
-{% endblock %}
-
 {% block userlinks %}
+  {% browserid_info %}
   {% if user.is_authenticated %}
     <li class="navbar-text"><small>Logged in as {{ user.username }}</small></li>
     {% if user.is_staff %}
