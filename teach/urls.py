@@ -17,7 +17,6 @@ urlpatterns = patterns('',
 
     url(r'^api/auth/persona$',
         'teach.views.persona_assertion_to_api_token'),
-    url(r'^$', 'example.views.login'),
     url(r'', include('django_browserid.urls')),
     url(r'^', include(router.urls)),
     url(r'^admin/', include(teach_admin.urls)),

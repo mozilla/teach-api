@@ -1,0 +1,29 @@
+{% extends "rest_framework/base.html" %}
+
+{% load browserid %}
+
+{% block branding %}
+  <a class="navbar-brand" href="/">Mozilla Learning API</a>
+{% endblock %}
+
+{% block body %}
+  {% browserid_info %}
+  {{ block.super }}
+{% endblock %}
+
+{% block userlinks %}
+  {% if user.is_authenticated %}
+    <li class="navbar-text"><small>Logged in as {{ user.username }}</small></li>
+    {% if user.is_staff %}
+      <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
+    {% endif %}
+    <li>{% browserid_logout text='Logout' %}</li>
+  {% else %}
+  <li>{% browserid_login text='Login with Webmaker' color='dark' %}</li>
+  {% endif %}
+{% endblock %}
+
+{% block script %}
+  {{ block.super }}
+  {% browserid_js %}
+{% endblock %}

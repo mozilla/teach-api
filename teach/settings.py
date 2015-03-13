@@ -74,7 +74,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'clubs',
-    'example',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -158,6 +157,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+TEMPLATE_DIRS = (
+    path('teach', 'templates'),
+)
 
 CORS_API_PERSONA_ORIGINS = os.environ.get(
     'CORS_API_PERSONA_ORIGINS',
