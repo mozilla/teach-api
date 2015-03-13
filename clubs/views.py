@@ -24,6 +24,13 @@ class ClubSerializer(serializers.HyperlinkedModelSerializer):
                   'latitude', 'longitude')
 
 class ClubViewSet(viewsets.ModelViewSet):
+    """
+    Clubs can be read by anyone, but creating a new club requires
+    authentication. The user who created a club is its **owner** and
+    they are the only one who can make future edits to it, aside
+    from staff.
+    """
+
     queryset = Club.objects.filter(is_active=True)
     serializer_class = ClubSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
