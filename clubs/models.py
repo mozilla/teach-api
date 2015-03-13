@@ -38,8 +38,9 @@ class Club(models.Model):
         default=True
     )
 
-    def geocode(self):
-        geolocator = Nominatim()
+    def geocode(self, geolocator=None):
+        if geolocator is None:
+            geolocator = Nominatim()
         loc = geolocator.geocode(self.location)
         if loc is not None:
             self.latitude = loc.latitude
