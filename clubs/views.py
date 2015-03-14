@@ -38,3 +38,8 @@ class ClubViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def perform_destroy(self, serializer):
+        instance = Club.objects.get(pk=serializer.pk)
+        instance.is_active = False
+        instance.save()

@@ -59,3 +59,9 @@ class ClubViewSetTests(TestCase):
         response = self.client.patch('/api/clubs/1/', {'name': 'u'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Club.objects.get(pk=1).name, 'u')
+
+    def test_delete_clubs_marks_as_inactive(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.delete('/api/clubs/1/')
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Club.objects.get(pk=1).is_active)
