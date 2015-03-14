@@ -36,6 +36,13 @@ class ClubViewSetTests(TestCase):
             'longitude': 6
         }])
 
+    def test_list_clubs_only_shows_active_clubs(self):
+        self.club.is_active = False
+        self.club.save()
+        response = self.client.get('/api/clubs/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
+
     def test_patch_clubs_without_auth_fails(self):
         response = self.client.patch('/api/clubs/1/', {'name': 'u'})
         self.assertEqual(response.status_code, 403)
