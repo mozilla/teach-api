@@ -36,6 +36,21 @@ class ClubViewSetTests(TestCase):
             'longitude': 6
         }])
 
+    def test_create_clubs_sets_owner(self):
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.post('/api/clubs/', {
+            'name': 'my club2',
+            'website': 'http://myclub2.org/',
+            'description': 'This is my club2.',
+            'location': 'Somewhere else',
+            'latitude': 1,
+            'longitude': 2
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['url'],
+                         'http://testserver/api/clubs/2/')
+        self.assertEqual(Club.objects.get(pk=2).owner, self.user2)
+
     def test_list_clubs_only_shows_active_clubs(self):
         self.club.is_active = False
         self.club.save()
