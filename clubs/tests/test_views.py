@@ -28,6 +28,7 @@ class ClubViewSetTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [{
             'url': 'http://testserver/api/clubs/1/',
+            'owner': 'user1',
             'name': 'my club',
             'website': 'http://myclub.org/',
             'description': 'This is my club.',

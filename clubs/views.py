@@ -18,10 +18,15 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         return obj.owner == request.user
 
 class ClubSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.SerializerMethodField()
+
     class Meta:
         model = Club
         fields = ('url', 'name', 'website', 'description', 'location',
-                  'latitude', 'longitude')
+                  'latitude', 'longitude', 'owner')
+
+    def get_owner(self, obj):
+        return obj.owner.username
 
 class ClubViewSet(viewsets.ModelViewSet):
     """
