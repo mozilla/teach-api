@@ -86,6 +86,7 @@ if not DEBUG:
     )
 
 MIDDLEWARE_CLASSES += (
+    'csp.middleware.CSPMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -138,6 +139,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = path('staticfiles')
+
+CSP_SCRIPT_SRC = ("'self'", "https://login.persona.org")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_FRAME_SRC = ("'self'", "https://login.persona.org")
 
 LOGIN_REDIRECT_URL = '/'
 
