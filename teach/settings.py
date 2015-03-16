@@ -77,7 +77,15 @@ INSTALLED_APPS = (
     'clubs',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = ()
+
+if not DEBUG:
+    MIDDLEWARE_CLASSES += (
+        'teach.ssl.RedirectToHttpsMiddleware',
+        'teach.ssl.HstsMiddleware',
+    )
+
+MIDDLEWARE_CLASSES += (
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
