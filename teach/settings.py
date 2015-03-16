@@ -140,6 +140,7 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = path('staticfiles')
 
+CSP_IMG_SRC = ("'self'", "data:")
 CSP_SCRIPT_SRC = ("'self'", "https://login.persona.org")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
 CSP_FRAME_SRC = ("'self'", "https://login.persona.org")
