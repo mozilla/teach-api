@@ -3,7 +3,7 @@
 
 <!DOCTYPE html>
 <meta charset="utf-8">
-<link rel="stylesheet" href="//google-code-prettify.googlecode.com/svn/trunk/styles/desert.css">
+<link rel="stylesheet" href="{% static 'vendor/prism.css' %}">
 <link rel="stylesheet" href="{% static 'css/bootswatch-cerulean.min.css' %}">
 {% browserid_css %}
 <style>
@@ -40,7 +40,7 @@ body pre.prettyprint {
   <h2>Obtaining An Authentication Token</h2>
   <p>Before you can make an authenticated request on the behalf of your user, you need to obtain an <strong>authentication token</strong> for them.</p>
   <p>Currently, this is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
-  <pre class="prettyprint">navigator.id.get(function(assertion) {
+  <pre><code class="language-clike">navigator.id.get(function(assertion) {
   if (!assertion) return; /* User aborted Persona login. */
   var req = new XMLHttpRequest();
   req.open('POST', '{{ ORIGIN }}{% url 'teach.views.persona_assertion_to_api_token' %}');
@@ -55,7 +55,7 @@ body pre.prettyprint {
     }
   };
   req.send('assertion=' + encodeURIComponent(assertion));
-});</pre>
+});</code></pre>
   <p>Note that in order for authentication to succeed, the assertion <em>must</em> come from one of the following origins:</p>
   <ul>
     {% for origin in CORS_API_PERSONA_ORIGINS %}
@@ -85,7 +85,7 @@ body pre.prettyprint {
   <p>For example:</p>
   {% endif %}
 
-  <pre>Authorization: Token {{ token }}</pre>
+  <pre><code class="language-http">Authorization: Token {{ token }}</code></pre>
 
   <h2>Further Information</h2>
 
@@ -95,4 +95,4 @@ body pre.prettyprint {
 </div>
 <script src="{% static 'rest_framework/js/jquery-1.8.1-min.js' %}"></script>
 {% browserid_js %}
-<script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<script src="{% static 'vendor/prism.js' %}"></script>
