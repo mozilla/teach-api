@@ -171,6 +171,12 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # This is needed to use the self-documenting browser UI.
+        'rest_framework.authentication.SessionAuthentication',
+        # This is needed to access the API programattically.
+        'rest_framework.authentication.TokenAuthentication'
     ]
 }
 
