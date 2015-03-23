@@ -3,6 +3,7 @@ from django.test import TestCase
 from mock import patch
 
 from ..settings_utils import set_default_env, set_default_db, \
+                             parse_email_backend_url, \
                              parse_secure_proxy_ssl_header
 
 class SetDefaultEnvTests(TestCase):
@@ -33,6 +34,47 @@ class SetDefaultDbTests(TestCase):
             del os.environ['DATABASE_URL']
             set_default_db('meh')
             self.assertEqual(os.environ['DATABASE_URL'], 'meh')
+
+class ParseEmailBackendUrlTests(TestCase):
+    def test_accepts_console(self):
+        self.assertEqual(parse_email_backend_url('console:'), {
+            'EMAIL_BACKEND': 'django.core.mail.backends.console.EmailBackend',
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
+        })
+
+    def test_accepts_mandrill(self):
+        self.assertEqual(parse_email_backend_url('mandrill://lol'), {
+            'EMAIL_BACKEND': 'djrill.mail.backends.djrill.DjrillBackend',
+            'MANDRILL_API_KEY': 'lol',
+            'EMAIL_BACKEND_INSTALLED_APPS': ('djrill',)
+        })
+
+    def test_accepts_smtp_without_auth(self):
+        self.assertEqual(parse_email_backend_url('smtp://foo.org:25'), {
+            'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'EMAIL_HOST': 'foo.org',
+            'EMAIL_PORT': 25,
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
+        })
+
+    def test_accepts_smtp_with_auth(self):
+        self.assertEqual(parse_email_backend_url('smtp://a:b@foo.org:25'), {
+            'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'EMAIL_HOST': 'foo.org',
+            'EMAIL_PORT': 25,
+            'EMAIL_HOST_USER': 'a',
+            'EMAIL_HOST_PASSWORD': 'b',
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
+        })
+
+    def test_accepts_smtp_plus_tls(self):
+        self.assertEqual(parse_email_backend_url('smtp+tls://foo.org:25'), {
+            'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+            'EMAIL_USE_TLS': True,
+            'EMAIL_HOST': 'foo.org',
+            'EMAIL_PORT': 25,
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
+        })
 
 class ParseSecureProxySslHeaderTests(TestCase):
     def test_basic_functionality(self):

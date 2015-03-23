@@ -58,6 +58,14 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
+* `DEFAULT_FROM_EMAIL` is the default email address to use for various
+  automated correspondence from the site manager(s), such as password
+  resets. Defaults to `webmaster@localhost`.
+* `EMAIL_BACKEND_URL` is a URL representing the email backend to use.
+  Examples include `console:`, `smtp://hostname:port`, and
+  `smtp+tls://user:pass@hostname:port`. Mandrill can also be used
+  via 'mandrill://your-mandrill-api-key', though this requires the
+  [djrill][] package.
 * `LOGINAPI_URL` is the URL of the Webmaker login API server.
   Defaults to `https://login.webmaker.org`.
 * `LOGINAPI_AUTH` is the *username:password* pair that will be
@@ -78,3 +86,4 @@ production over http.**
 
   [teach]: https://github.com/mozilla/teach.webmaker.org
   [twelve-factor]: http://12factor.net/
+  [djrill]: https://github.com/brack3t/Djrill
