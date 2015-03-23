@@ -1,6 +1,9 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from rest_framework import serializers, viewsets, permissions
 
 from .models import Club
+from . import email
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -43,6 +46,16 @@ class ClubViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+        send_mail(
+            subject=email.CREATE_MAIL_SUBJECT,
+            message=email.CREATE_MAIL_BODY % {
+                'username': self.request.user.username
+            },
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[self.request.user.email],
+            # We don't want send failure to prevent a success response.
+            fail_silently=True
+        )
 
     def perform_destroy(self, serializer):
         instance = Club.objects.get(pk=serializer.pk)

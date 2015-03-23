@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import TestCase
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -8,7 +9,7 @@ from ..views import ClubViewSet
 class ClubViewSetTests(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user('user1')
-        self.user2 = User.objects.create_user('user2')
+        self.user2 = User.objects.create_user('user2', 'user2@example.org')
         self.client = APIClient()
 
         club = Club(
@@ -37,9 +38,9 @@ class ClubViewSetTests(TestCase):
             'longitude': 6
         }])
 
-    def test_create_clubs_sets_owner(self):
+    def create_club(self):
         self.client.force_authenticate(user=self.user2)
-        response = self.client.post('/api/clubs/', {
+        return self.client.post('/api/clubs/', {
             'name': 'my club2',
             'website': 'http://myclub2.org/',
             'description': 'This is my club2.',
@@ -47,10 +48,18 @@ class ClubViewSetTests(TestCase):
             'latitude': 1,
             'longitude': 2
         })
+
+    def test_create_clubs_sets_owner(self):
+        response = self.create_club()
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['url'],
                          'http://testserver/api/clubs/2/')
         self.assertEqual(Club.objects.get(pk=2).owner, self.user2)
+
+    def test_create_clubs_sends_email(self):
+        response = self.create_club()
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], 'user2@example.org')
 
     def test_list_clubs_only_shows_active_clubs(self):
         self.club.is_active = False
