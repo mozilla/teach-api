@@ -45,18 +45,33 @@ class ClubViewSet(viewsets.ModelViewSet):
                           IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        club = serializer.save(owner=self.request.user)
         send_mail(
             subject=email.CREATE_MAIL_SUBJECT,
             message=email.CREATE_MAIL_BODY % {
                 'username': self.request.user.username
             },
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[self.request.user.email] +
-                           settings.TEACH_STAFF_EMAILS,
+            recipient_list=[self.request.user.email],
             # We don't want send failure to prevent a success response.
             fail_silently=True
         )
+        if settings.TEACH_STAFF_EMAILS:
+            send_mail(
+                subject=email.CREATE_MAIL_STAFF_SUBJECT,
+                message=email.CREATE_MAIL_STAFF_BODY % {
+                    'username': self.request.user.username,
+                    'email': self.request.user.email,
+                    'club_name': club.name,
+                    'club_location': club.location,
+                    'club_website': club.website,
+                    'club_description': club.description
+                },
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=settings.TEACH_STAFF_EMAILS,
+                # We don't want send failure to prevent a success response.
+                fail_silently=True
+            )
 
     def perform_destroy(self, serializer):
         instance = Club.objects.get(pk=serializer.pk)

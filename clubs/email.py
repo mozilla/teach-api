@@ -14,3 +14,16 @@ on behalf of the Mozilla Learning team
 
 p.s. Be sure to check out our tips for running clubs [link to page that will be built in #255]. They'll help you get support, find training opportunities, increase the impact of your club, and much more. 
 """
+
+CREATE_MAIL_STAFF_SUBJECT = 'A new Club has been added to the map'
+
+CREATE_MAIL_STAFF_BODY = """\
+%(username)s has added their Club to the map.
+
+Name: %(club_name)s
+Location: %(club_location)s
+Website: %(club_website)s
+Description: %(club_description)s
+
+You may want to email them at %(email)s to say hello!
+"""

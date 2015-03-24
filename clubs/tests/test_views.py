@@ -59,13 +59,16 @@ class ClubViewSetTests(TestCase):
 
     def test_create_clubs_sends_email_to_creator(self):
         response = self.create_club()
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], 'user2@example.org')
+        msg = mail.outbox[0]
+        self.assertEqual(msg.to, ['user2@example.org'])
+        self.assertRegexpMatches(msg.body, 'user2')
 
     @override_settings(TEACH_STAFF_EMAILS=['foo@bar.org'])
     def test_create_clubs_sends_email_to_teach_staff(self):
         response = self.create_club()
-        self.assertEqual(mail.outbox[0].to[1], 'foo@bar.org')
+        msg = mail.outbox[1]
+        self.assertEqual(msg.to, ['foo@bar.org'])
+        self.assertRegexpMatches(msg.body, 'user2@example.org')
 
     def test_list_clubs_only_shows_active_clubs(self):
         self.club.is_active = False
