@@ -2,6 +2,8 @@ import os
 import sys
 import urlparse
 
+from django.core.validators import validate_email, ValidationError
+
 def set_default_env(**kwargs):
     for key in kwargs:
         if not key in os.environ:
@@ -37,6 +39,18 @@ def parse_email_backend_url(url):
     else:
         raise ValueError('unknown scheme for email backend url: %s' % url)
     return s
+
+def parse_email_addresses(addresses):
+    emails = [
+        address.strip() for address in addresses.split(',')
+        if address.strip()
+    ]
+    for email in emails:
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise ValueError('"%s" is not a valid email address' % email)
+    return emails
 
 def parse_secure_proxy_ssl_header(field):
     name, value = field.split(':')

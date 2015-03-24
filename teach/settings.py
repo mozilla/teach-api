@@ -17,6 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 path = lambda *parts: os.path.join(BASE_DIR, *parts)
 
 from .settings_utils import set_default_env, set_default_db, \
+                            parse_email_addresses, \
                             parse_email_backend_url, \
                             parse_secure_proxy_ssl_header, \
                             is_running_test_suite
@@ -64,6 +65,10 @@ BROWSERID_AUTOLOGIN_ENABLED = False
 if DEBUG and os.environ.get('BROWSERID_AUTOLOGIN_EMAIL'):
     BROWSERID_AUTOLOGIN_EMAIL = os.environ['BROWSERID_AUTOLOGIN_EMAIL']
     BROWSERID_AUTOLOGIN_ENABLED = True
+
+TEACH_STAFF_EMAILS = parse_email_addresses(
+    os.environ.get('TEACH_STAFF_EMAILS', '')
+)
 
 ALLOWED_HOSTS = [urlparse.urlparse(ORIGIN).hostname]
 

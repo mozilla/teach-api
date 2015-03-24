@@ -61,6 +61,10 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `DEFAULT_FROM_EMAIL` is the default email address to use for various
   automated correspondence from the site manager(s), such as password
   resets. Defaults to `webmaster@localhost`.
+* `TEACH_STAFF_EMAILS` is a comma-separated list of email addresses
+  representing people who should be emailed whenever a Webmaker Club
+  is created, or something else notable (but also non-technical) is
+  done on the site.
 * `EMAIL_BACKEND_URL` is a URL representing the email backend to use.
   Examples include `console:`, `smtp://hostname:port`, and
   `smtp+tls://user:pass@hostname:port`. Mandrill can also be used

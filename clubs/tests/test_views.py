@@ -1,6 +1,7 @@
 from django.core import mail
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test.utils import override_settings
 from rest_framework.test import APIClient
 
 from ..models import Club
@@ -56,10 +57,15 @@ class ClubViewSetTests(TestCase):
                          'http://testserver/api/clubs/2/')
         self.assertEqual(Club.objects.get(pk=2).owner, self.user2)
 
-    def test_create_clubs_sends_email(self):
+    def test_create_clubs_sends_email_to_creator(self):
         response = self.create_club()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], 'user2@example.org')
+
+    @override_settings(TEACH_STAFF_EMAILS=['foo@bar.org'])
+    def test_create_clubs_sends_email_to_teach_staff(self):
+        response = self.create_club()
+        self.assertEqual(mail.outbox[0].to[1], 'foo@bar.org')
 
     def test_list_clubs_only_shows_active_clubs(self):
         self.club.is_active = False

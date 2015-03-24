@@ -3,6 +3,7 @@ from django.test import TestCase
 from mock import patch
 
 from ..settings_utils import set_default_env, set_default_db, \
+                             parse_email_addresses, \
                              parse_email_backend_url, \
                              parse_secure_proxy_ssl_header
 
@@ -34,6 +35,25 @@ class SetDefaultDbTests(TestCase):
             del os.environ['DATABASE_URL']
             set_default_db('meh')
             self.assertEqual(os.environ['DATABASE_URL'], 'meh')
+
+class ParseEmailAddressesTests(TestCase):
+    def test_accepts_empty_string(self):
+        self.assertEqual(parse_email_addresses(''), [])
+
+    def test_accepts_one_email(self):
+        self.assertEqual(parse_email_addresses('a@b.org'), ['a@b.org'])
+
+    def test_accepts_two_emails(self):
+        self.assertEqual(parse_email_addresses('a@b.org, c@d.org'), [
+            'a@b.org',
+            'c@d.org'
+        ])
+
+    def test_rejects_non_email_addresses(self):
+        self.assertRaisesRegexp(
+            ValueError, '"blah" is not a valid email address',
+            parse_email_addresses, 'blah'
+        )
 
 class ParseEmailBackendUrlTests(TestCase):
     def test_accepts_console(self):

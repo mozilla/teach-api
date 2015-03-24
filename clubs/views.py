@@ -52,7 +52,8 @@ class ClubViewSet(viewsets.ModelViewSet):
                 'username': self.request.user.username
             },
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[self.request.user.email],
+            recipient_list=[self.request.user.email] +
+                           settings.TEACH_STAFF_EMAILS,
             # We don't want send failure to prevent a success response.
             fail_silently=True
         )
