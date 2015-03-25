@@ -17,7 +17,8 @@ class Club(models.Model):
     )
 
     website = models.URLField(
-        help_text="The URL of the club's primary website."
+        help_text="The URL of the club's primary website.",
+        blank=True
     )
 
     description = models.TextField(
