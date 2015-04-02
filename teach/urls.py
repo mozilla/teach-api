@@ -25,6 +25,11 @@ urlpatterns = patterns('',
     url(r'^auth/logout$',
         'teach.views.logout'),
 
+    url(r'^auth/oauth2/authorize$',
+        'teach.views.oauth2_authorize'),
+    url(r'^auth/oauth2/callback$',
+        'teach.views.oauth2_callback'),
+
     url(r'^api-introduction/', 'teach.views.api_introduction',
         name='api-introduction'),
     url(r'^api/', include(router.urls)),

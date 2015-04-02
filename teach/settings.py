@@ -34,6 +34,10 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         CORS_API_PERSONA_ORIGINS='*'
     )
 
+IDAPI_URL = os.environ.get('IDAPI_URL', 'https://id.webmaker.org')
+IDAPI_CLIENT_ID = os.environ.get('IDAPI_CLIENT_ID')
+IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
+
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 

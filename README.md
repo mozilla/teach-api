@@ -74,11 +74,17 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
   Defaults to `https://login.webmaker.org`.
 * `LOGINAPI_AUTH` is the *username:password* pair that will be
   used to authenticate with the Webmaker login server, e.g.
-  `john:1234`.
+  `john:1234`. This is needed for Persona-based authentication only.
+* `IDAPI_URL` is the URL of the Webmaker ID (OAuth2) server. Defaults
+  to `https://id.webmaker.org`.
+* `IDAPI_CLIENT_ID` is the server's OAuth2 client ID.
+* `IDAPI_CLIENT_SECRET` is the server's OAuth2 client secret.
 * `CORS_API_PERSONA_ORIGINS` is a comma-separated list of origins that
   can submit Persona assertions to the API server in exchange for API
-  tokens. This list should not contain any whitespace. If `DEBUG` is
-  enabled, any origin can submit Persona assertions.
+  tokens. It's also a list of origins that can delegate login to
+  the API server and obtain API tokens. This list should not
+  contain any whitespace. If `DEBUG` is enabled, any origin can
+  submit Persona assertions or delegate login to the API server.
 
 ## Deployment
 

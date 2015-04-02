@@ -1,11 +1,13 @@
 import json
+import urllib
 import django.contrib.auth
 from django.shortcuts import render
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 import django_browserid.base
+import requests
 from rest_framework import routers
 from rest_framework.authtoken.models import Token
 
@@ -13,6 +15,31 @@ from . import webmaker
 
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
+
+def oauth2_authorize(request):
+    qs = urllib.urlencode({
+        'client_id': settings.IDAPI_CLIENT_ID,
+        'response_type': 'code',
+        'scopes': 'user',
+        'state': "TODO: generate random key and store it in session"
+    })
+    return HttpResponseRedirect("%s/login/oauth/authorize?%s" % (
+        settings.IDAPI_URL,
+        qs
+    ))
+
+def oauth2_callback(request):
+    # TODO: Verify that request.GET['state'] is valid.
+    payload = {
+        'client_id': settings.IDAPI_CLIENT_ID,
+        'client_secret': settings.IDAPI_CLIENT_SECRET,
+        'grant_type': 'authorization_code',
+        'code': request.GET['code']
+    }
+    r = requests.post('%s/login/oauth/access_token' % settings.IDAPI_URL,
+                      data=payload)
+    # TODO: Actually log the user in.
+    return HttpResponse('response: %s' % (r.text,))
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')
