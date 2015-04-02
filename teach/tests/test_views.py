@@ -1,7 +1,7 @@
 import json
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django_browserid.base import MockVerifier, VerificationResult
 
 from .. import views
@@ -48,6 +48,71 @@ class CorsTests(TestCase):
         c = Client()
         response = c.get('/admin/', HTTP_ORIGIN='http://foo.org')
         self.assertFalse('access-control-allow-origin' in response)
+
+@override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
+                   DEBUG=False)
+class AuthStatusTests(TestCase):
+    def setUp(self):
+        self.view = views.get_status
+        self.factory = RequestFactory()
+        self.user = User.objects.create_user('foo', 'foo@example.org')
+
+    def get_request(self, user=None, **kwargs):
+        if user is None:
+            user = AnonymousUser()
+        req = self.factory.get('/', **kwargs)
+        req.user = user
+        return req
+
+    def test_403_when_origin_is_absent(self):
+        req = self.get_request()
+        response = self.view(req)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, 'invalid origin')
+
+    def test_403_when_origin_is_not_whitelisted(self):
+        req = self.get_request(HTTP_ORIGIN='http://foo.com')
+        response = self.view(req)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, 'invalid origin')
+
+    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=True)
+    def test_any_origin_allowed_when_debugging(self):
+        req = self.get_request()
+        response = self.view(req)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=False)
+    def test_any_origin_not_allowed_when_not_debugging(self):
+        req = self.get_request(HTTP_ORIGIN='http://foo.com')
+        response = self.view(req)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.content, 'invalid origin')
+
+    def test_cors_header_is_valid(self):
+        req = self.get_request(HTTP_ORIGIN='http://example.org')
+        response = self.view(req)
+        self.assertEqual(response['access-control-allow-origin'],
+                         'http://example.org')
+        self.assertEqual(response['access-control-allow-credentials'],
+                         'true')
+
+    def test_username_is_none_when_logged_out(self):
+        req = self.get_request(HTTP_ORIGIN='http://example.org')
+        response = self.view(req)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), {
+            'username': None
+        })
+
+    def test_info_is_provided_when_logged_in(self):
+        req = self.get_request(user=self.user,
+                               HTTP_ORIGIN='http://example.org')
+        response = self.view(req)
+        self.assertEqual(response.status_code, 200)
+        content = json.loads(response.content)
+        self.assertEqual(content['username'], 'foo')
+        self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
 
 @override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
                    DEBUG=False)

@@ -16,10 +16,12 @@ urlpatterns = patterns('',
     # url(r'^$', 'teach.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    # We intentionally don't want this under /api/, as it
-    # has a different CORS policy than the rest of the API.
+    # We intentionally don't want these under /api/, as they
+    # have a different CORS policy than the rest of the API.
     url(r'^auth/persona$',
         'teach.views.persona_assertion_to_api_token'),
+    url(r'^auth/status$',
+        'teach.views.get_status'),
 
     url(r'^api-introduction/', 'teach.views.api_introduction',
         name='api-introduction'),

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 import django_browserid.base
 from rest_framework import routers
 from rest_framework.authtoken.models import Token
@@ -13,35 +13,60 @@ from . import webmaker
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
 
-@require_POST
-@csrf_exempt
-def persona_assertion_to_api_token(request, backend=None):
+def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')
     valid_origins = settings.CORS_API_PERSONA_ORIGINS
     if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
-            return HttpResponse('invalid origin', status=403)
+            return None
     res = HttpResponse()
     res['access-control-allow-origin'] = origin
+    return res
+
+def json_response(res, data):
+    res['content-type'] = 'application/json'
+    res.content = json.dumps(data)
+    return res
+
+def info_for_user(res, user):
+    token, created = Token.objects.get_or_create(user=user)
+    return json_response(res, {
+        'token': token.key,
+        'username': user.username
+    })
+
+@require_GET
+def get_status(request):
+    res = check_origin(request)
+    if res is None:
+        return HttpResponse('invalid origin', status=403)
+    res['access-control-allow-credentials'] = 'true'
+    if request.user.is_authenticated():
+        return info_for_user(res, request.user)
+    return json_response(res, {
+        'username': None
+    })
+
+@require_POST
+@csrf_exempt
+def persona_assertion_to_api_token(request, backend=None):
+    res = check_origin(request)
+    if res is None:
+        return HttpResponse('invalid origin', status=403)
     assertion = request.POST.get('assertion')
     if not assertion:
         res.status_code = 400
         res.content = 'assertion required'
         return res
     if backend is None: backend = webmaker.WebmakerBrowserIDBackend()
-    user = backend.authenticate(assertion=assertion, audience=origin,
+    user = backend.authenticate(assertion=assertion,
+                                audience=request.META.get('HTTP_ORIGIN'),
                                 request=request)
     if user is None:
         res.status_code = 403
         res.content = 'invalid assertion or email'
         return res
-    token, created = Token.objects.get_or_create(user=user)
-    res['content-type'] = 'application/json'
-    res.content = json.dumps({
-        'token': token.key,
-        'username': user.username
-    })
-    return res
+    return info_for_user(res, user)
 
 def api_introduction(request):
     if request.user.is_authenticated():
