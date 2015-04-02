@@ -1,4 +1,5 @@
 import json
+import django.contrib.auth
 from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse
@@ -33,6 +34,18 @@ def info_for_user(res, user):
     return json_response(res, {
         'token': token.key,
         'username': user.username
+    })
+
+@require_POST
+@csrf_exempt
+def logout(request):
+    res = check_origin(request)
+    if res is None:
+        return HttpResponse('invalid origin', status=403)
+    res['access-control-allow-credentials'] = 'true'
+    django.contrib.auth.logout(request)
+    return json_response(res, {
+        'username': None
     })
 
 @require_GET

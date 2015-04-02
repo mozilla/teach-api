@@ -3,6 +3,7 @@ from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django.contrib.auth.models import User, AnonymousUser
 from django_browserid.base import MockVerifier, VerificationResult
+import mock
 
 from .. import views
 from .. import webmaker
@@ -48,6 +49,24 @@ class CorsTests(TestCase):
         c = Client()
         response = c.get('/admin/', HTTP_ORIGIN='http://foo.org')
         self.assertFalse('access-control-allow-origin' in response)
+
+@override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
+                   DEBUG=False)
+class AuthLogoutTests(TestCase):
+    @mock.patch('django.contrib.auth.logout')
+    def test_logout_works(self, logout):
+        factory = RequestFactory()
+        req = factory.post('/', HTTP_ORIGIN='http://example.org')
+        response = views.logout(req)
+        self.assertTrue(logout.called)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['access-control-allow-origin'],
+                         'http://example.org')
+        self.assertEqual(response['access-control-allow-credentials'],
+                         'true')
+        self.assertEqual(json.loads(response.content), {
+            'username': None
+        })
 
 @override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
                    DEBUG=False)

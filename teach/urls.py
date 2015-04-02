@@ -22,6 +22,8 @@ urlpatterns = patterns('',
         'teach.views.persona_assertion_to_api_token'),
     url(r'^auth/status$',
         'teach.views.get_status'),
+    url(r'^auth/logout$',
+        'teach.views.logout'),
 
     url(r'^api-introduction/', 'teach.views.api_introduction',
         name='api-introduction'),
