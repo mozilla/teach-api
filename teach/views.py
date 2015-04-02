@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
+from django.utils.crypto import get_random_string
 import django_browserid.base
 import requests
 from rest_framework import routers
@@ -17,11 +18,12 @@ def get_verifier():
     return django_browserid.base.RemoteVerifier()
 
 def oauth2_authorize(request):
+    request.session['oauth2_state'] = get_random_string(length=32)
     qs = urllib.urlencode({
         'client_id': settings.IDAPI_CLIENT_ID,
         'response_type': 'code',
         'scopes': 'user',
-        'state': "TODO: generate random key and store it in session"
+        'state': request.session['oauth2_state']
     })
     return HttpResponseRedirect("%s/login/oauth/authorize?%s" % (
         settings.IDAPI_URL,
@@ -29,12 +31,19 @@ def oauth2_authorize(request):
     ))
 
 def oauth2_callback(request):
-    # TODO: Verify that request.GET['state'] is valid.
+    expected_state = request.session.get('oauth2_state')
+    state = request.GET.get('state')
+    code = request.GET.get('code')
+    if state is None or expected_state is None or state != expected_state:
+        return HttpResponse('invalid state')
+    if code is None:
+        return HttpResponse('invalid code')
+    del request.session['oauth2_state']
     payload = {
         'client_id': settings.IDAPI_CLIENT_ID,
         'client_secret': settings.IDAPI_CLIENT_SECRET,
         'grant_type': 'authorization_code',
-        'code': request.GET['code']
+        'code': code
     }
     r = requests.post('%s/login/oauth/access_token' % settings.IDAPI_URL,
                       data=payload)
