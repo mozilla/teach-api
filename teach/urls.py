@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url(r'^api-introduction/', 'teach.views.api_introduction',
         name='api-introduction'),
     url(r'^api/', include(router.urls)),
-    url(r'^$', RedirectView.as_view(url='/api/')),
+    url(r'^$', RedirectView.as_view(url='/api/', permanent=False)),
     url(r'', include('django_browserid.urls')),
     url(r'^admin/', include(teach_admin.urls)),
 )
