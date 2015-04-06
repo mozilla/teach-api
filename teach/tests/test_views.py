@@ -1,4 +1,5 @@
 import json
+import doctest
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django.contrib.auth.models import User, AnonymousUser
@@ -199,3 +200,7 @@ class PersonaTokenToAPITokenTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json['username'], 'foo')
         self.assertRegexpMatches(response.json['token'], r'^[0-9a-f]+$')
+
+def load_tests(loader, tests, ignore):
+    tests.addTests(doctest.DocTestSuite(views))
+    return tests

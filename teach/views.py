@@ -1,5 +1,6 @@
 import json
 import urllib
+import urlparse
 import django.contrib.auth
 from django.shortcuts import render
 from django.conf import settings
@@ -16,6 +17,32 @@ from . import webmaker
 
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
+
+def get_origin(url):
+    """
+    Returns the origin (http://www.w3.org/Security/wiki/Same_Origin_Policy)
+    of the given URL.
+
+    Examples:
+
+        >>> get_origin('http://foo/blarg')
+        'http://foo'
+        >>> get_origin('https://foo')
+        'https://foo'
+        >>> get_origin('http://foo:123/blarg')
+        'http://foo:123'
+
+    If the URL isn't http or https, it returns None:
+
+        >>> get_origin('')
+        >>> get_origin('weirdprotocol://lol.com')
+
+    """
+
+    info = urlparse.urlparse(url)
+    if info.scheme not in ['http', 'https']:
+        return None
+    return '%s://%s' % (info.scheme, info.netloc)
 
 def oauth2_authorize(request):
     request.session['oauth2_state'] = get_random_string(length=32)
