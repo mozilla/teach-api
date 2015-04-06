@@ -41,6 +41,9 @@ IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 
+if 'ADMIN_PROTECTION_USERPASS' in os.environ:
+    ADMIN_PROTECTION_USERPASS = os.environ['ADMIN_PROTECTION_USERPASS']
+
 if 'SECURE_PROXY_SSL_HEADER' in os.environ:
     SECURE_PROXY_SSL_HEADER = parse_secure_proxy_ssl_header(
         os.environ['SECURE_PROXY_SSL_HEADER']
@@ -110,6 +113,7 @@ MIDDLEWARE_CLASSES += (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'teach.admin_protection.BasicAuthMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = ()

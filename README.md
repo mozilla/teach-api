@@ -50,6 +50,11 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `ORIGIN` is the origin of the server, as it appears
   to users. If `DEBUG` is enabled, this defaults to
   `http://localhost:PORT`. Otherwise, it must be defined.
+* `ADMIN_PROTECTION_USERPASS` is an optional *username:password* value
+  that can be used to provide extra protection for accessing the
+  admin UI. That is, in addition to requiring staff permission to access the
+  admin UI, they will also be prompted for this username and password via
+  HTTP Basic Authentication.
 * `DATABASE_URL` is the URL for the database. Defaults to a `sqlite://`
   URL pointing to `db.sqlite3` at the root of the repository. If this
   value is the name of another (all-caps) environment variable, e.g.
