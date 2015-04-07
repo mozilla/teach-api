@@ -1,5 +1,4 @@
 import json
-import urllib
 import urlparse
 import django.contrib.auth
 from django.shortcuts import render
@@ -13,16 +12,8 @@ import requests
 from rest_framework import routers
 from rest_framework.authtoken.models import Token
 
-from . import webmaker
-
-def get_idapi_url(path, query=None):
-    if query is not None:
-        qs = urllib.urlencode(query)
-        path = '%s?%s' % (path, qs)
-    if settings.BROWSERID_AUTOLOGIN_ENABLED:
-        return '%s/fake_oauth2%s' % (settings.ORIGIN, path)
-    else:
-        return '%s%s' % (settings.IDAPI_URL, path)
+from . import webmaker, new_webmaker
+from .new_webmaker import get_idapi_url
 
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
@@ -71,22 +62,10 @@ def oauth2_callback(request):
     if code is None:
         return HttpResponse('invalid code')
     del request.session['oauth2_state']
-    payload = {
-        'client_id': settings.IDAPI_CLIENT_ID,
-        'client_secret': settings.IDAPI_CLIENT_SECRET,
-        'grant_type': 'authorization_code',
-        'code': code
-    }
-    r = requests.post(get_idapi_url('/login/oauth/access_token'),
-                      data=payload)
-    info = r.json()
-    access_token = info['access_token']
-    r2 = requests.get(get_idapi_url('/user'), headers={
-        'authorization': 'token %s' % access_token
-    })
+    user = django.contrib.auth.authenticate(webmaker_oauth2_code=code)
+    django.contrib.auth.login(request, user)
 
-    # TODO: Actually log the user in.
-    return HttpResponse('response: %s %s' % (r.text, r2.text))
+    return HttpResponse('hello %s' % user.username)
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')

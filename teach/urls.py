@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^admin/', include(teach_admin.urls)),
 ]
 
-if settings.BROWSERID_AUTOLOGIN_ENABLED:
+if settings.IDAPI_ENABLE_FAKE_OAUTH2:
     urlpatterns += [
         url(r'^fake_oauth2/', include('fake_oauth2.urls')),
     ]

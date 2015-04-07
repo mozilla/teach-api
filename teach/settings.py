@@ -60,6 +60,13 @@ PORT = int(os.environ['PORT'])
 
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
+if DEBUG and IDAPI_URL.startswith('fake:'):
+    IDAPI_ENABLE_FAKE_OAUTH2 = True
+    IDAPI_FAKE_OAUTH2_USERNAME = IDAPI_URL.split(':')[1]
+    IDAPI_FAKE_OAUTH2_EMAIL = IDAPI_URL.split(':')[2]
+else:
+    IDAPI_ENABLE_FAKE_OAUTH2 = False
+
 set_default_db('sqlite:///%s' % path('db.sqlite3'))
 
 globals().update(parse_email_backend_url(os.environ['EMAIL_BACKEND_URL']))
@@ -95,7 +102,7 @@ INSTALLED_APPS = (
     'clubs',
 )
 
-if BROWSERID_AUTOLOGIN_ENABLED:
+if IDAPI_ENABLE_FAKE_OAUTH2:
     INSTALLED_APPS += (
         'fake_oauth2',
     )
@@ -128,6 +135,7 @@ if BROWSERID_AUTOLOGIN_ENABLED:
 
 AUTHENTICATION_BACKENDS += (
    'django.contrib.auth.backends.ModelBackend',
+   'teach.new_webmaker.WebmakerOAuth2Backend',
    'teach.webmaker.WebmakerBrowserIDBackend',
 )
 

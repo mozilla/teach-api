@@ -5,7 +5,6 @@ from django.views.decorators.http import require_POST, require_GET
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 def expect(a, b):
     if a != b:
@@ -45,12 +44,11 @@ def user(request):
     expect(request.META.get('HTTP_AUTHORIZATION'),
            'token fake_oauth2_access_token')
 
-    user = User.objects.get(email=settings.BROWSERID_AUTOLOGIN_EMAIL)
     res = HttpResponse()
     res['content-type'] = 'application/json'
     res.content = json.dumps({
-        'username': user.username,
-        'email': user.email
+        'username': settings.IDAPI_FAKE_OAUTH2_USERNAME,
+        'email': settings.IDAPI_FAKE_OAUTH2_EMAIL
     })
 
     return res
