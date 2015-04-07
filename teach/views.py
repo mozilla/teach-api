@@ -1,18 +1,97 @@
 import json
+import urlparse
 import django.contrib.auth
 from django.shortcuts import render
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
+from django.utils.crypto import get_random_string
 import django_browserid.base
+import requests
 from rest_framework import routers
 from rest_framework.authtoken.models import Token
 
-from . import webmaker
+from . import webmaker, new_webmaker
+from .new_webmaker import get_idapi_url
 
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
+
+def get_origin(url):
+    """
+    Returns the origin (http://www.w3.org/Security/wiki/Same_Origin_Policy)
+    of the given URL.
+
+    Examples:
+
+        >>> get_origin('http://foo/blarg')
+        'http://foo'
+        >>> get_origin('https://foo')
+        'https://foo'
+        >>> get_origin('http://foo:123/blarg')
+        'http://foo:123'
+
+    If the URL isn't http or https, it returns None:
+
+        >>> get_origin('')
+        >>> get_origin('weirdprotocol://lol.com')
+
+    """
+
+    info = urlparse.urlparse(url)
+    if info.scheme not in ['http', 'https']:
+        return None
+    return '%s://%s' % (info.scheme, info.netloc)
+
+def validate_callback(callback):
+    origin = get_origin(callback)
+    valid_origins = settings.CORS_API_PERSONA_ORIGINS
+    if origin and origin in valid_origins:
+        return callback
+    if settings.DEBUG and valid_origins == ['*']:
+        return callback
+    return None
+
+def set_callback(request):
+    callback = validate_callback(request.GET.get('callback', ''))
+    if callback:
+        request.session['oauth2_callback'] = callback
+
+def oauth2_authorize(request):
+    set_callback(request)
+    request.session['oauth2_state'] = get_random_string(length=32)
+
+    return HttpResponseRedirect(get_idapi_url("/login/oauth/authorize", {
+        'client_id': settings.IDAPI_CLIENT_ID,
+        'response_type': 'code',
+        'scopes': 'user email',
+        'state': request.session['oauth2_state']
+    }))
+
+def oauth2_callback(request):
+    callback = request.session.get('oauth2_callback', '/')
+    expected_state = request.session.get('oauth2_state')
+    state = request.GET.get('state')
+    code = request.GET.get('code')
+    if request.GET.get('logout') == 'true':
+        django.contrib.auth.logout(request)
+        return HttpResponseRedirect(callback)
+    if state is None or expected_state is None or state != expected_state:
+        return HttpResponse('invalid state')
+    if code is None:
+        return HttpResponse('invalid code')
+    del request.session['oauth2_state']
+    user = django.contrib.auth.authenticate(webmaker_oauth2_code=code)
+    django.contrib.auth.login(request, user)
+
+    return HttpResponseRedirect(callback)
+
+def oauth2_logout(request):
+    set_callback(request)
+    return HttpResponseRedirect(get_idapi_url("/logout", {
+        'client_id': settings.IDAPI_CLIENT_ID
+    }))
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')

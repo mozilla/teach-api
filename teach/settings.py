@@ -34,6 +34,10 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         CORS_API_PERSONA_ORIGINS='*'
     )
 
+IDAPI_URL = os.environ.get('IDAPI_URL', 'https://id.webmaker.org')
+IDAPI_CLIENT_ID = os.environ.get('IDAPI_CLIENT_ID')
+IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
+
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 
@@ -55,6 +59,13 @@ DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
 PORT = int(os.environ['PORT'])
 
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
+
+if DEBUG and IDAPI_URL.startswith('fake:'):
+    IDAPI_ENABLE_FAKE_OAUTH2 = True
+    IDAPI_FAKE_OAUTH2_USERNAME = IDAPI_URL.split(':')[1]
+    IDAPI_FAKE_OAUTH2_EMAIL = IDAPI_URL.split(':')[2]
+else:
+    IDAPI_ENABLE_FAKE_OAUTH2 = False
 
 set_default_db('sqlite:///%s' % path('db.sqlite3'))
 
@@ -91,6 +102,11 @@ INSTALLED_APPS = (
     'clubs',
 )
 
+if IDAPI_ENABLE_FAKE_OAUTH2:
+    INSTALLED_APPS += (
+        'fake_oauth2',
+    )
+
 MIDDLEWARE_CLASSES = ()
 
 if not DEBUG:
@@ -119,6 +135,7 @@ if BROWSERID_AUTOLOGIN_ENABLED:
 
 AUTHENTICATION_BACKENDS += (
    'django.contrib.auth.backends.ModelBackend',
+   'teach.new_webmaker.WebmakerOAuth2Backend',
    'teach.webmaker.WebmakerBrowserIDBackend',
 )
 
