@@ -1,4 +1,5 @@
-from django.conf.urls import patterns, include, url
+from django.conf import settings
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
 
@@ -11,7 +12,7 @@ from clubs.views import ClubViewSet
 router = TeachRouter()
 router.register(r'clubs', ClubViewSet)
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'teach.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
@@ -36,4 +37,9 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='/api/', permanent=False)),
     url(r'', include('django_browserid.urls')),
     url(r'^admin/', include(teach_admin.urls)),
-)
+]
+
+if settings.BROWSERID_AUTOLOGIN_ENABLED:
+    urlpatterns += [
+        url(r'^fake_oauth2/', include('fake_oauth2.urls')),
+    ]

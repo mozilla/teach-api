@@ -95,6 +95,11 @@ INSTALLED_APPS = (
     'clubs',
 )
 
+if BROWSERID_AUTOLOGIN_ENABLED:
+    INSTALLED_APPS += (
+        'fake_oauth2',
+    )
+
 MIDDLEWARE_CLASSES = ()
 
 if not DEBUG:

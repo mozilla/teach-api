@@ -44,8 +44,10 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
   (this should always be false in production).
 * `BROWSERID_AUTOLOGIN_EMAIL` specifies an email address to auto-login
-  as when Persona login buttons are clicked. It is useful for offline
-  development and is only valid if `DEBUG` is true.
+  as when Persona login buttons are clicked, *or* when the Webmaker ID
+  (OAuth2) server is contacted. It is useful for offline development
+  and is only valid if `DEBUG` is true. Make sure an existing Django
+  user account exists for the email associated with this address.
 * `PORT` is the port that the server binds to.
 * `ORIGIN` is the origin of the server, as it appears
   to users. If `DEBUG` is enabled, this defaults to

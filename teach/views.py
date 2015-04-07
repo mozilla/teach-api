@@ -15,6 +15,15 @@ from rest_framework.authtoken.models import Token
 
 from . import webmaker
 
+def get_idapi_url(path, query=None):
+    if query is not None:
+        qs = urllib.urlencode(query)
+        path = '%s?%s' % (path, qs)
+    if settings.BROWSERID_AUTOLOGIN_ENABLED:
+        return '%s/fake_oauth2%s' % (settings.ORIGIN, path)
+    else:
+        return '%s%s' % (settings.IDAPI_URL, path)
+
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
 
@@ -46,16 +55,12 @@ def get_origin(url):
 
 def oauth2_authorize(request):
     request.session['oauth2_state'] = get_random_string(length=32)
-    qs = urllib.urlencode({
+    return HttpResponseRedirect(get_idapi_url("/login/oauth/authorize", {
         'client_id': settings.IDAPI_CLIENT_ID,
         'response_type': 'code',
         'scopes': 'user email',
         'state': request.session['oauth2_state']
-    })
-    return HttpResponseRedirect("%s/login/oauth/authorize?%s" % (
-        settings.IDAPI_URL,
-        qs
-    ))
+    }))
 
 def oauth2_callback(request):
     expected_state = request.session.get('oauth2_state')
@@ -72,11 +77,11 @@ def oauth2_callback(request):
         'grant_type': 'authorization_code',
         'code': code
     }
-    r = requests.post('%s/login/oauth/access_token' % settings.IDAPI_URL,
+    r = requests.post(get_idapi_url('/login/oauth/access_token'),
                       data=payload)
     info = r.json()
     access_token = info['access_token']
-    r2 = requests.get('%s/user' % settings.IDAPI_URL, headers={
+    r2 = requests.get(get_idapi_url('/user'), headers={
         'authorization': 'token %s' % access_token
     })
 
