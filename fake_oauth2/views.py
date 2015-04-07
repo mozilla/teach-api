@@ -52,3 +52,9 @@ def user(request):
     })
 
     return res
+
+@require_GET
+def logout(request):
+    url = reverse('teach.views.oauth2_callback')
+    qs = 'logout=true'
+    return HttpResponseRedirect('%s?%s' % (url, qs))

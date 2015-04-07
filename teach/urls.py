@@ -30,6 +30,8 @@ urlpatterns = [
         'teach.views.oauth2_authorize'),
     url(r'^auth/oauth2/callback$',
         'teach.views.oauth2_callback'),
+    url(r'^auth/oauth2/logout$',
+        'teach.views.oauth2_logout'),
 
     url(r'^api-introduction/', 'teach.views.api_introduction',
         name='api-introduction'),

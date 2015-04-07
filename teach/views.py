@@ -44,8 +44,24 @@ def get_origin(url):
         return None
     return '%s://%s' % (info.scheme, info.netloc)
 
+def validate_callback(callback):
+    origin = get_origin(callback)
+    valid_origins = settings.CORS_API_PERSONA_ORIGINS
+    if origin and origin in valid_origins:
+        return callback
+    if settings.DEBUG and valid_origins == ['*']:
+        return callback
+    return None
+
+def set_callback(request):
+    callback = validate_callback(request.GET.get('callback', ''))
+    if callback:
+        request.session['oauth2_callback'] = callback
+
 def oauth2_authorize(request):
+    set_callback(request)
     request.session['oauth2_state'] = get_random_string(length=32)
+
     return HttpResponseRedirect(get_idapi_url("/login/oauth/authorize", {
         'client_id': settings.IDAPI_CLIENT_ID,
         'response_type': 'code',
@@ -54,9 +70,13 @@ def oauth2_authorize(request):
     }))
 
 def oauth2_callback(request):
+    callback = request.session.get('oauth2_callback', '/')
     expected_state = request.session.get('oauth2_state')
     state = request.GET.get('state')
     code = request.GET.get('code')
+    if request.GET.get('logout') == 'true':
+        django.contrib.auth.logout(request)
+        return HttpResponseRedirect(callback)
     if state is None or expected_state is None or state != expected_state:
         return HttpResponse('invalid state')
     if code is None:
@@ -65,7 +85,13 @@ def oauth2_callback(request):
     user = django.contrib.auth.authenticate(webmaker_oauth2_code=code)
     django.contrib.auth.login(request, user)
 
-    return HttpResponse('hello %s' % user.username)
+    return HttpResponseRedirect(callback)
+
+def oauth2_logout(request):
+    set_callback(request)
+    return HttpResponseRedirect(get_idapi_url("/logout", {
+        'client_id': settings.IDAPI_CLIENT_ID
+    }))
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')
