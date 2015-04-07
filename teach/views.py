@@ -49,7 +49,7 @@ def oauth2_authorize(request):
     qs = urllib.urlencode({
         'client_id': settings.IDAPI_CLIENT_ID,
         'response_type': 'code',
-        'scopes': 'user',
+        'scopes': 'user email',
         'state': request.session['oauth2_state']
     })
     return HttpResponseRedirect("%s/login/oauth/authorize?%s" % (
@@ -74,8 +74,14 @@ def oauth2_callback(request):
     }
     r = requests.post('%s/login/oauth/access_token' % settings.IDAPI_URL,
                       data=payload)
+    info = r.json()
+    access_token = info['access_token']
+    r2 = requests.get('%s/user' % settings.IDAPI_URL, headers={
+        'authorization': 'token %s' % access_token
+    })
+
     # TODO: Actually log the user in.
-    return HttpResponse('response: %s' % (r.text,))
+    return HttpResponse('response: %s %s' % (r.text, r2.text))
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')
