@@ -136,6 +136,10 @@ class AuthStatusTests(TestCase):
         self.assertEqual(content['username'], 'foo')
         self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
 
+def get_query(url):
+    urlinfo = urlparse.urlparse(url)
+    return dict(urlparse.parse_qsl(urlinfo.query))
+
 @override_settings(
     DEBUG=False,
     CORS_API_LOGIN_ORIGINS=['http://frontend'],
@@ -147,15 +151,22 @@ class OAuth2EndpointTests(TestCase):
     def test_authorize_redirects_to_idapi(self, get_random_string):
         response = self.client.get('/auth/oauth2/authorize')
         self.assertEqual(response.status_code, 302)
-        urlinfo = urlparse.urlparse(response['location'])
-        query = dict(urlparse.parse_qsl(urlinfo.query))
-        self.assertEqual(query, {
+        self.assertEqual(get_query(response['location']), {
             'client_id': 'clientid',
             'response_type': 'code',
             'scopes': 'user email',
+            'action': 'signin',
             'state': 'abcd'
         })
         get_random_string.assert_called_with(length=32)
+
+    def test_authorize_passes_action_signup(self):
+        response = self.client.get('/auth/oauth2/authorize?action=signup')
+        self.assertEqual(get_query(response['location'])['action'], 'signup')
+
+    def test_authorize_ignores_invalid_action(self):
+        response = self.client.get('/auth/oauth2/authorize?action=LOL')
+        self.assertEqual(get_query(response['location'])['action'], 'signin')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     def test_authorize_stores_oauth2_state(self, _):

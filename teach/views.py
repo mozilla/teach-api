@@ -61,11 +61,16 @@ def set_callback(request):
 def oauth2_authorize(request):
     set_callback(request)
     request.session['oauth2_state'] = get_random_string(length=32)
+    action = request.GET.get('action')
+
+    if action not in ['signup', 'signin']:
+        action = 'signin'
 
     return HttpResponseRedirect(get_idapi_url("/login/oauth/authorize", {
         'client_id': settings.IDAPI_CLIENT_ID,
         'response_type': 'code',
         'scopes': 'user email',
+        'action': action,
         'state': request.session['oauth2_state']
     }))
 
