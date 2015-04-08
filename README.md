@@ -38,7 +38,7 @@ string), the boolean is true; otherwise, it's false.
 
 **Note:** When running `manage.py`, the following environment
 variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
-`CORS_API_PERSONA_ORIGINS`. Also, `DEBUG` is enabled.
+`CORS_API_LOGIN_ORIGINS`. Also, `DEBUG` is enabled.
 
 * `SECRET_KEY` is a large random value.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
@@ -90,7 +90,7 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
   is useful for offline development.
 * `IDAPI_CLIENT_ID` is the server's OAuth2 client ID.
 * `IDAPI_CLIENT_SECRET` is the server's OAuth2 client secret.
-* `CORS_API_PERSONA_ORIGINS` is a comma-separated list of origins that
+* `CORS_API_LOGIN_ORIGINS` is a comma-separated list of origins that
   can submit Persona assertions to the API server in exchange for API
   tokens. It's also a list of origins that can delegate login to
   the API server and obtain API tokens. This list should not

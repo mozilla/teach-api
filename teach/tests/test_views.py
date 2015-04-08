@@ -51,7 +51,7 @@ class CorsTests(TestCase):
         response = c.get('/admin/', HTTP_ORIGIN='http://foo.org')
         self.assertFalse('access-control-allow-origin' in response)
 
-@override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
+@override_settings(CORS_API_LOGIN_ORIGINS=['http://example.org'],
                    DEBUG=False)
 class AuthLogoutTests(TestCase):
     @mock.patch('django.contrib.auth.logout')
@@ -69,7 +69,7 @@ class AuthLogoutTests(TestCase):
             'username': None
         })
 
-@override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
+@override_settings(CORS_API_LOGIN_ORIGINS=['http://example.org'],
                    DEBUG=False)
 class AuthStatusTests(TestCase):
     def setUp(self):
@@ -96,13 +96,13 @@ class AuthStatusTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, 'invalid origin')
 
-    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=True)
+    @override_settings(CORS_API_LOGIN_ORIGINS=['*'], DEBUG=True)
     def test_any_origin_allowed_when_debugging(self):
         req = self.get_request()
         response = self.view(req)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=False)
+    @override_settings(CORS_API_LOGIN_ORIGINS=['*'], DEBUG=False)
     def test_any_origin_not_allowed_when_not_debugging(self):
         req = self.get_request(HTTP_ORIGIN='http://foo.com')
         response = self.view(req)
@@ -134,7 +134,7 @@ class AuthStatusTests(TestCase):
         self.assertEqual(content['username'], 'foo')
         self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
 
-@override_settings(CORS_API_PERSONA_ORIGINS=['http://example.org'],
+@override_settings(CORS_API_LOGIN_ORIGINS=['http://example.org'],
                    DEBUG=False)
 class PersonaTokenToAPITokenTests(TestCase):
     def setUp(self):
@@ -153,14 +153,14 @@ class PersonaTokenToAPITokenTests(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.content, 'invalid origin')
 
-    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=True)
+    @override_settings(CORS_API_LOGIN_ORIGINS=['*'], DEBUG=True)
     def test_any_origin_allowed_when_debugging(self):
         req = self.factory.post('/', HTTP_ORIGIN='http://foo.com')
         response = self.view(req)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.content, 'assertion required')
 
-    @override_settings(CORS_API_PERSONA_ORIGINS=['*'], DEBUG=False)
+    @override_settings(CORS_API_LOGIN_ORIGINS=['*'], DEBUG=False)
     def test_any_origin_not_allowed_when_not_debugging(self):
         req = self.factory.post('/', HTTP_ORIGIN='http://foo.com')
         response = self.view(req)

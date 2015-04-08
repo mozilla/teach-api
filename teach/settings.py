@@ -31,7 +31,7 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         # TODO: Support any alternative port passed-in from the command-line.
         PORT='8000',
         EMAIL_BACKEND_URL='console:',
-        CORS_API_PERSONA_ORIGINS='*'
+        CORS_API_LOGIN_ORIGINS='*'
     )
 
 IDAPI_URL = os.environ.get('IDAPI_URL', 'https://id.webmaker.org')
@@ -223,8 +223,8 @@ TEMPLATE_DIRS = (
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
-CORS_API_PERSONA_ORIGINS = os.environ.get(
-    'CORS_API_PERSONA_ORIGINS',
+CORS_API_LOGIN_ORIGINS = os.environ.get(
+    'CORS_API_LOGIN_ORIGINS',
     ''
 ).split(',')
 

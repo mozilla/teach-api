@@ -58,7 +58,7 @@ body pre.prettyprint {
 });</code></pre>
   <p>Note that in order for authentication to succeed, the assertion <em>must</em> come from one of the following origins:</p>
   <ul>
-    {% for origin in CORS_API_PERSONA_ORIGINS %}
+    {% for origin in CORS_API_LOGIN_ORIGINS %}
     <li>
       <code>{{ origin }}</code>
       {% if origin == '*' %}(i.e., any origin, supported only on deploys with <code>DEBUG</code> enabled){% endif %}

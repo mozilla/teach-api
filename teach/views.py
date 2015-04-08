@@ -46,7 +46,7 @@ def get_origin(url):
 
 def validate_callback(callback):
     origin = get_origin(callback)
-    valid_origins = settings.CORS_API_PERSONA_ORIGINS
+    valid_origins = settings.CORS_API_LOGIN_ORIGINS
     if origin and origin in valid_origins:
         return callback
     if settings.DEBUG and valid_origins == ['*']:
@@ -95,7 +95,7 @@ def oauth2_logout(request):
 
 def check_origin(request):
     origin = request.META.get('HTTP_ORIGIN')
-    valid_origins = settings.CORS_API_PERSONA_ORIGINS
+    valid_origins = settings.CORS_API_LOGIN_ORIGINS
     if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
             return None
@@ -168,7 +168,7 @@ def api_introduction(request):
         token = '0eafe9fb9111e93bdc67a899623365a21f69065b'
     return render(request, 'teach/api-introduction.html', {
         'ORIGIN': settings.ORIGIN,
-        'CORS_API_PERSONA_ORIGINS': settings.CORS_API_PERSONA_ORIGINS,
+        'CORS_API_LOGIN_ORIGINS': settings.CORS_API_LOGIN_ORIGINS,
         'token': token
     })
 
