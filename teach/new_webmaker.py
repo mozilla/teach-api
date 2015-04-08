@@ -4,7 +4,7 @@ import logging
 from django.contrib.auth.models import User
 from django.conf import settings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('teach.oauth2')
 
 def get_idapi_url(path, query=None):
     if query is not None:

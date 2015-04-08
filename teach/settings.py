@@ -191,6 +191,10 @@ LOGGING = {
         },
     },
     'loggers': {
+        'teach.oauth2': {
+            'handlers': ['console'],
+            'level': 'WARNING'
+        },
         'django.request': {
             'handlers': ['console'],
             'level': 'ERROR'
