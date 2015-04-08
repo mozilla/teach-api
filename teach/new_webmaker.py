@@ -42,7 +42,7 @@ def get_user_info(access_token):
         return None
     return user_req.json()
 
-def get_or_create_user(username, email):
+def get_or_create_user(username, email, **kwargs):
     users = User.objects.filter(username=username)
     if len(users) == 0:
         user = User.objects.create_user(username, email)

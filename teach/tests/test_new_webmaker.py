@@ -121,7 +121,9 @@ class WebmakerOAuth2BackendTests(TestCase):
     @mock.patch('teach.new_webmaker.exchange_code_for_access_token',
                 return_value='tok')
     @mock.patch('teach.new_webmaker.get_user_info',
-                return_value={'username': 'foo', 'email': 'foo@a.org'})
+                return_value={'username': 'foo',
+                              'email': 'foo@a.org',
+                              'extra_weird_info': 'blah'})
     def test_authenticate_returns_user_on_success(self, u, a):
         backend = nw.WebmakerOAuth2Backend()
         user = backend.authenticate('validcode')
