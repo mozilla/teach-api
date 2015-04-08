@@ -25,8 +25,10 @@ def exchange_code_for_access_token(code):
     token_req = requests.post(get_idapi_url('/login/oauth/access_token'),
                               data=payload)
     if token_req.status_code != 200:
-        logger.warn('POST /login/oauth/access_token returned %s' % (
+        logger.warn('POST /login/oauth/access_token returned %s '
+                    'w/ content %s' % (
             token_req.status_code,
+            repr(token_req.content)
         ))
         return None
     return token_req.json()['access_token']
@@ -36,8 +38,10 @@ def get_user_info(access_token):
         'authorization': 'token %s' % access_token
     })
     if user_req.status_code != 200:
-        logger.warn('GET /user returned %s' % (
+        logger.warn('GET /user returned %s '
+                    'w/ content %s' % (
             user_req.status_code,
+            repr(user_req.content)
         ))
         return None
     return user_req.json()

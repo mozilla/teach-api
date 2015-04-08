@@ -15,13 +15,14 @@ from .. import new_webmaker as nw
 )
 class WebmakerOAuth2BackendTests(TestCase):
     def mock_negative_response(self, url, request):
-        return httmock.response(404)
+        return httmock.response(404, "nope")
 
     @mock.patch('teach.new_webmaker.logger.warn')
     def test_exchange_code_for_access_token_returns_none_on_failure(self, m):
         with httmock.HTTMock(self.mock_negative_response):
             self.assertEqual(nw.exchange_code_for_access_token('u'), None)
-        m.assert_called_with('POST /login/oauth/access_token returned 404')
+        m.assert_called_with('POST /login/oauth/access_token returned 404 '
+                             'w/ content \'nope\'')
 
     def test_exchange_code_for_access_token_returns_token_on_success(self):
         def mock_response(url, request):
@@ -45,7 +46,7 @@ class WebmakerOAuth2BackendTests(TestCase):
     def test_get_user_info_returns_none_on_failure(self, m):
         with httmock.HTTMock(self.mock_negative_response):
             self.assertEqual(nw.get_user_info('tok'), None)
-        m.assert_called_with('GET /user returned 404')
+        m.assert_called_with('GET /user returned 404 w/ content \'nope\'')
 
     def test_get_user_info_returns_info_on_success(self):
         def mock_response(url, request):
