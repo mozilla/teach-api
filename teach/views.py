@@ -77,12 +77,18 @@ def oauth2_callback(request):
     if request.GET.get('logout') == 'true':
         django.contrib.auth.logout(request)
         return HttpResponseRedirect(callback)
-    if state is None or expected_state is None or state != expected_state:
+    if state is None:
+        return HttpResponse('missing state')
+    if expected_state is None or state != expected_state:
         return HttpResponse('invalid state')
     if code is None:
-        return HttpResponse('invalid code')
-    del request.session['oauth2_state']
+        return HttpResponse('missing code')
+
     user = django.contrib.auth.authenticate(webmaker_oauth2_code=code)
+    if user is None:
+        return HttpResponse('invalid code or idapi error')
+    del request.session['oauth2_state']
+
     django.contrib.auth.login(request, user)
 
     return HttpResponseRedirect(callback)

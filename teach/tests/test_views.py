@@ -1,4 +1,6 @@
 import json
+import urlparse
+import urllib
 import doctest
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
@@ -133,6 +135,114 @@ class AuthStatusTests(TestCase):
         content = json.loads(response.content)
         self.assertEqual(content['username'], 'foo')
         self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
+
+@override_settings(
+    DEBUG=False,
+    CORS_API_LOGIN_ORIGINS=['http://frontend'],
+    IDAPI_URL='http://idapi',
+    IDAPI_CLIENT_ID='clientid'
+)
+class OAuth2EndpointTests(TestCase):
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    def test_authorize_redirects_to_idapi(self, get_random_string):
+        response = self.client.get('/auth/oauth2/authorize')
+        self.assertEqual(response.status_code, 302)
+        urlinfo = urlparse.urlparse(response['location'])
+        query = dict(urlparse.parse_qsl(urlinfo.query))
+        self.assertEqual(query, {
+            'client_id': 'clientid',
+            'response_type': 'code',
+            'scopes': 'user email',
+            'state': 'abcd'
+        })
+        get_random_string.assert_called_with(length=32)
+
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    def test_authorize_stores_oauth2_state(self, _):
+        self.client.get('/auth/oauth2/authorize')
+        self.assertEqual(self.client.session['oauth2_state'], 'abcd')
+
+    def test_authorize_remembers_valid_callback(self):
+        qs = urllib.urlencode({'callback': 'http://frontend/blah'})
+        response = self.client.get('/auth/oauth2/authorize?%s' % qs)
+        self.assertEqual(self.client.session['oauth2_callback'],
+                         'http://frontend/blah')
+
+    def test_authorize_ignores_invalid_callback(self):
+        qs = urllib.urlencode({'callback': 'http://evil.com/bad'})
+        response = self.client.get('/auth/oauth2/authorize?%s' % qs)
+        self.assertFalse('oauth2_callback' in self.client.session)
+
+    def test_callback_reports_missing_state_in_querystring(self):
+        response = self.client.get('/auth/oauth2/callback')
+        self.assertEqual(response.content, 'missing state')
+
+    def test_callback_fails_when_state_missing_from_session(self):
+        response = self.client.get('/auth/oauth2/callback?state=bad')
+        self.assertEqual(response.content, 'invalid state')
+
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    def test_callback_fails_when_state_is_incorrect(self, _):
+        self.client.get('/auth/oauth2/authorize')
+        response = self.client.get('/auth/oauth2/callback?state=bad')
+        self.assertEqual(response.content, 'invalid state')
+
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    def test_callback_reports_missing_code(self, _):
+        self.client.get('/auth/oauth2/authorize')
+        response = self.client.get('/auth/oauth2/callback?state=abcd')
+        self.assertEqual(response.content, 'missing code')
+
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    @mock.patch('django.contrib.auth.authenticate', return_value=None)
+    def test_callback_reports_invalid_code_or_idapi_err(self, authmock, _):
+        self.client.get('/auth/oauth2/authorize')
+        response = self.client.get('/auth/oauth2/callback?state=abcd&code=a')
+        self.assertEqual(response.content, 'invalid code or idapi error')
+        authmock.assert_called_with(webmaker_oauth2_code='a')
+
+    @mock.patch('teach.views.get_random_string', return_value='abcd')
+    def test_callback_logs_user_in_and_redirects(self, _):
+        user = User.objects.create_user('foo', 'foo@example.org')
+        user.backend = 'fake string so auth.login() does not throw'
+        self.client.get('/auth/oauth2/authorize')
+        with mock.patch('django.contrib.auth.authenticate',
+                        return_value=user) as authmock:
+            response = self.client.get('/auth/oauth2/callback?'
+                                       'state=abcd&code=cool')
+            authmock.assert_called_with(webmaker_oauth2_code='cool')
+            self.assertTrue('_auth_user_id' in self.client.session)
+            self.assertFalse('oauth2_state' in self.client.session)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['location'], 'http://testserver/')
+
+    def test_callback_logs_user_out_and_redirects(self):
+        user = User.objects.create_user('foo',
+                                        'foo@example.org',
+                                        password='blah')
+        self.client.login(username='foo', password='blah')
+        self.assertNotEqual(self.client.session.keys(), [])
+        response = self.client.get('/auth/oauth2/callback?logout=true')
+        self.assertEqual(self.client.session.keys(), [])
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], 'http://testserver/')
+
+    def test_logout_redirects_to_idapi(self):
+        response = self.client.get('/auth/oauth2/logout')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'],
+                         'http://idapi/logout?client_id=clientid')
+
+    def test_logout_remembers_valid_callback(self):
+        qs = urllib.urlencode({'callback': 'http://frontend/blah'})
+        response = self.client.get('/auth/oauth2/logout?%s' % qs)
+        self.assertEqual(self.client.session['oauth2_callback'],
+                         'http://frontend/blah')
+
+    def test_logout_ignores_invalid_callback(self):
+        qs = urllib.urlencode({'callback': 'http://evil.com/bad'})
+        response = self.client.get('/auth/oauth2/logout?%s' % qs)
+        self.assertFalse('oauth2_callback' in self.client.session)
 
 @override_settings(CORS_API_LOGIN_ORIGINS=['http://example.org'],
                    DEBUG=False)
