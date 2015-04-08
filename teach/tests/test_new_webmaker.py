@@ -46,7 +46,8 @@ class WebmakerOAuth2BackendTests(TestCase):
     def test_get_user_info_returns_none_on_failure(self, m):
         with httmock.HTTMock(self.mock_negative_response):
             self.assertEqual(nw.get_user_info('tok'), None)
-        m.assert_called_with('GET /user returned 404 w/ content \'nope\'')
+        m.assert_called_with('GET /user returned 404 w/ content \'nope\' '
+                             'and access token tok')
 
     def test_get_user_info_returns_info_on_success(self):
         def mock_response(url, request):

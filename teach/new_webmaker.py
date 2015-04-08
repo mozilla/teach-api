@@ -39,9 +39,10 @@ def get_user_info(access_token):
     })
     if user_req.status_code != 200:
         logger.warn('GET /user returned %s '
-                    'w/ content %s' % (
+                    'w/ content %s and access token %s' % (
             user_req.status_code,
-            repr(user_req.content)
+            repr(user_req.content),
+            access_token
         ))
         return None
     return user_req.json()
