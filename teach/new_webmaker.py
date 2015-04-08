@@ -1,7 +1,10 @@
 import urllib
 import requests
+import logging
 from django.contrib.auth.models import User
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def get_idapi_url(path, query=None):
     if query is not None:
@@ -12,24 +15,45 @@ def get_idapi_url(path, query=None):
     else:
         return '%s%s' % (settings.IDAPI_URL, path)
 
+def exchange_code_for_access_token(code):
+    payload = {
+        'client_id': settings.IDAPI_CLIENT_ID,
+        'client_secret': settings.IDAPI_CLIENT_SECRET,
+        'grant_type': 'authorization_code',
+        'code': code
+    }
+    token_req = requests.post(get_idapi_url('/login/oauth/access_token'),
+                              data=payload)
+    if token_req.status_code != 200:
+        logger.warn('POST /login/oauth/access_token returned %s' % (
+            token_req.status_code,
+        ))
+        return None
+    return token_req.json()['access_token']
+
+def get_user_info(access_token):
+    user_req = requests.get(get_idapi_url('/user'), headers={
+        'authorization': 'token %s' % access_token
+    })
+    if user_req.status_code != 200:
+        logger.warn('GET /user returned %s' % (
+            user_req.status_code,
+        ))
+        return None
+    return user_req.json()
+
 class WebmakerOAuth2Backend(object):
     def authenticate(self, webmaker_oauth2_code=None, **kwargs):
         if webmaker_oauth2_code is None:
             return None
 
-        payload = {
-            'client_id': settings.IDAPI_CLIENT_ID,
-            'client_secret': settings.IDAPI_CLIENT_SECRET,
-            'grant_type': 'authorization_code',
-            'code': webmaker_oauth2_code
-        }
-        token_req = requests.post(get_idapi_url('/login/oauth/access_token'),
-                                  data=payload)
-        access_token = token_req.json()['access_token']
-        user_req = requests.get(get_idapi_url('/user'), headers={
-            'authorization': 'token %s' % access_token
-        })
-        user_info = user_req.json()
+        access_token = exchange_code_for_access_token(webmaker_oauth2_code)
+        if access_token is None:
+            return None
+
+        user_info = get_user_info(access_token)
+        if user_info is None:
+            return None
 
         users = User.objects.filter(username=user_info['username'])
         if len(users) == 0:
