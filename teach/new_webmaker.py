@@ -42,6 +42,14 @@ def get_user_info(access_token):
         return None
     return user_req.json()
 
+def get_or_create_user(username, email):
+    users = User.objects.filter(username=username)
+    if len(users) == 0:
+        user = User.objects.create_user(username, email)
+        return user
+    else:
+        return users[0]
+
 class WebmakerOAuth2Backend(object):
     def authenticate(self, webmaker_oauth2_code=None, **kwargs):
         if webmaker_oauth2_code is None:
@@ -55,13 +63,7 @@ class WebmakerOAuth2Backend(object):
         if user_info is None:
             return None
 
-        users = User.objects.filter(username=user_info['username'])
-        if len(users) == 0:
-            user = User.objects.create_user(user_info['username'],
-                                            user_info['email'])
-            return user
-        else:
-            return users[0]
+        return get_or_create_user(**user_info)
 
     def get_user(self, user_id):
         try:
