@@ -126,6 +126,7 @@ MIDDLEWARE_CLASSES += (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'teach.admin_protection.BasicAuthMiddleware',
+    'teach.p3p.P3PMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = ()
