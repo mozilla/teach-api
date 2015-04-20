@@ -12,7 +12,7 @@ A member of our team will send you an email soon to see how you're doing and mak
 Michelle Thorne,
 on behalf of the Mozilla Learning team
 
-P.S. Be sure to check out our Clubs Toolkit [http://teach.mozilla.org/clubs/toolkit] to help you get support, find training opportunities, increase the impact of your club, and much more.
+P.S. Be sure to check out our tips for running clubs at %(teach_site_clubs_page)s !
 """
 
 CREATE_MAIL_STAFF_SUBJECT = 'A new Club has been added to the map'
