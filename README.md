@@ -43,11 +43,6 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `SECRET_KEY` is a large random value.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
   (this should always be false in production).
-* `BROWSERID_AUTOLOGIN_EMAIL` specifies an email address to auto-login
-  as when Persona login buttons are clicked. It is useful for offline
-  development and is only valid if `DEBUG` is true. Make sure an
-  existing Django user account exists for the email associated with
-  this address.
 * `PORT` is the port that the server binds to.
 * `ORIGIN` is the origin of the server, as it appears
   to users. If `DEBUG` is enabled, this defaults to
@@ -77,11 +72,6 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
   `smtp+tls://user:pass@hostname:port`. Mandrill can also be used
   via 'mandrill://your-mandrill-api-key', though this requires the
   [djrill][] package.
-* `LOGINAPI_URL` is the URL of the Webmaker login API server.
-  Defaults to `https://login.webmaker.org`.
-* `LOGINAPI_AUTH` is the *username:password* pair that will be
-  used to authenticate with the Webmaker login server, e.g.
-  `john:1234`. This is needed for Persona-based authentication only.
 * `IDAPI_URL` is the URL of the Webmaker ID (OAuth2) server. Defaults
   to `https://id.webmaker.org`. If it is set to a value of the
   form `fake:username:email`, e.g. `fake:foo:foo@example.org`, and if
@@ -99,6 +89,21 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `TEACH_SITE_CLUBS_PAGE` is the URL to the Clubs page on the Teach
   site, used when sending emails to users. It defaults to
   https://teach.mozilla.org/clubs/.
+
+### Deprecated Environment Variables
+
+These will be removed at some point.
+
+* `LOGINAPI_URL` is the URL of the Webmaker login API server.
+  Defaults to `https://login.webmaker.org`.
+* `LOGINAPI_AUTH` is the *username:password* pair that will be
+  used to authenticate with the Webmaker login server, e.g.
+  `john:1234`. This is needed for Persona-based authentication only.
+* `BROWSERID_AUTOLOGIN_EMAIL` specifies an email address to auto-login
+  as when Persona login buttons are clicked. It is useful for offline
+  development and is only valid if `DEBUG` is true. Make sure an
+  existing Django user account exists for the email associated with
+  this address.
 
 ## Deployment
 
