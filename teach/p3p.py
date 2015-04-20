@@ -1,5 +1,5 @@
 POLICY = ('CP="This is not a P3P policy, but Mozilla deeply cares about '
-          'your privacy. See http://www.mozilla.org/persona/privacy-policy '
+          'your privacy. See https://www.mozilla.org/en-US/privacy/websites/ '
           'for more."')
 
 class P3PMiddleware(object):
