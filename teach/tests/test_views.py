@@ -143,6 +143,7 @@ def get_query(url):
 @override_settings(
     DEBUG=False,
     CORS_API_LOGIN_ORIGINS=['http://frontend'],
+    IDAPI_ENABLE_FAKE_OAUTH2=False,
     IDAPI_URL='http://idapi',
     IDAPI_CLIENT_ID='clientid'
 )
