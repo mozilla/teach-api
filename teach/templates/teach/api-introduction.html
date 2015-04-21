@@ -38,6 +38,11 @@ body pre.prettyprint {
   <p>You can browse the self-documenting API in your browser at <a class="api-path" href="{% url 'api-root' %}">{% url 'api-root' %}</a>.</p>
   <p>The API is read-only when unauthenticated and can be accessed via <code>XMLHttpRequest</code> from any browser with support for <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.</p>
   <h2>Obtaining An Authentication Token</h2>
+  <div class="alert alert-warning">
+    <p><strong>Note:</strong> The Persona-based instructions below are actually <strong>deprecated</strong> in favor of the new OAuth2-based <a href="https://github.com/mozilla/id.webmaker.org">id.webmaker.org</a> system.</p>
+
+    <p>Unfortunately, documentation for obtaining authentication tokens using the new system hasn't been written yet, but some amount of guidance can be found at <code><a href="https://github.com/mozilla/teach.webmaker.org/issues/576">mozilla/teach.webmaker.org#576</a></code>.</p>
+  </div>
   <p>Before you can make an authenticated request on the behalf of your user, you need to obtain an <strong>authentication token</strong> for them.</p>
   <p>Currently, this is done by submitting a <a href="https://developer.mozilla.org/en-US/Persona">Persona</a> assertion to <code>{% url 'teach.views.persona_assertion_to_api_token' %}</code> like follows:</p>
   <pre><code class="language-clike">navigator.id.get(function(assertion) {
