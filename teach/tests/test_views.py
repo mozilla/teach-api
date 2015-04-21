@@ -143,11 +143,16 @@ def get_query(url):
 @override_settings(
     DEBUG=False,
     CORS_API_LOGIN_ORIGINS=['http://frontend'],
+    TEACH_SITE_URL='http://teach',
     IDAPI_ENABLE_FAKE_OAUTH2=False,
     IDAPI_URL='http://idapi',
     IDAPI_CLIENT_ID='clientid'
 )
 class OAuth2EndpointTests(TestCase):
+    def assertCallbackErrorCode(self, response, error_code):
+        self.assertRegexpMatches(response.content,
+                                 r'Error code: %s' % error_code)
+
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     def test_authorize_redirects_to_idapi(self, get_random_string):
         response = self.client.get('/auth/oauth2/authorize')
@@ -187,30 +192,30 @@ class OAuth2EndpointTests(TestCase):
 
     def test_callback_reports_missing_state_in_querystring(self):
         response = self.client.get('/auth/oauth2/callback')
-        self.assertEqual(response.content, 'missing state')
+        self.assertCallbackErrorCode(response, 'missing_state')
 
     def test_callback_fails_when_state_missing_from_session(self):
         response = self.client.get('/auth/oauth2/callback?state=bad')
-        self.assertEqual(response.content, 'invalid state')
+        self.assertCallbackErrorCode(response, 'invalid_state')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     def test_callback_fails_when_state_is_incorrect(self, _):
         self.client.get('/auth/oauth2/authorize')
         response = self.client.get('/auth/oauth2/callback?state=bad')
-        self.assertEqual(response.content, 'invalid state')
+        self.assertCallbackErrorCode(response, 'invalid_state')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     def test_callback_reports_missing_code(self, _):
         self.client.get('/auth/oauth2/authorize')
         response = self.client.get('/auth/oauth2/callback?state=abcd')
-        self.assertEqual(response.content, 'missing code')
+        self.assertCallbackErrorCode(response, 'missing_code')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     @mock.patch('django.contrib.auth.authenticate', return_value=None)
     def test_callback_reports_invalid_code_or_idapi_err(self, authmock, _):
         self.client.get('/auth/oauth2/authorize')
         response = self.client.get('/auth/oauth2/callback?state=abcd&code=a')
-        self.assertEqual(response.content, 'invalid code or idapi error')
+        self.assertCallbackErrorCode(response, 'invalid_code_or_idapi_err')
         authmock.assert_called_with(webmaker_oauth2_code='a')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
@@ -226,7 +231,7 @@ class OAuth2EndpointTests(TestCase):
             self.assertTrue('_auth_user_id' in self.client.session)
             self.assertFalse('oauth2_state' in self.client.session)
             self.assertEqual(response.status_code, 302)
-            self.assertEqual(response['location'], 'http://testserver/')
+            self.assertEqual(response['location'], 'http://teach/')
 
     def test_callback_logs_user_out_and_redirects(self):
         user = User.objects.create_user('foo',
@@ -237,7 +242,7 @@ class OAuth2EndpointTests(TestCase):
         response = self.client.get('/auth/oauth2/callback?logout=true')
         self.assertEqual(self.client.session.keys(), [])
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], 'http://testserver/')
+        self.assertEqual(response['location'], 'http://teach/')
 
     def test_logout_redirects_to_idapi(self):
         response = self.client.get('/auth/oauth2/logout')

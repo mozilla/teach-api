@@ -74,8 +74,15 @@ def oauth2_authorize(request):
         'state': request.session['oauth2_state']
     }))
 
+def login_error(request, error_code, callback):
+    return render(request, 'teach/oauth2_callback_error.html', {
+        'error_code': error_code,
+        'callback': callback
+    })
+
 def oauth2_callback(request):
-    callback = request.session.get('oauth2_callback', '/')
+    callback = request.session.get('oauth2_callback',
+                                   '%s/' % settings.TEACH_SITE_URL)
     expected_state = request.session.get('oauth2_state')
     state = request.GET.get('state')
     code = request.GET.get('code')
@@ -83,15 +90,15 @@ def oauth2_callback(request):
         django.contrib.auth.logout(request)
         return HttpResponseRedirect(callback)
     if state is None:
-        return HttpResponse('missing state')
+        return login_error(request, 'missing_state', callback)
     if expected_state is None or state != expected_state:
-        return HttpResponse('invalid state')
+        return login_error(request, 'invalid_state', callback)
     if code is None:
-        return HttpResponse('missing code')
+        return login_error(request, 'missing_code', callback)
 
     user = django.contrib.auth.authenticate(webmaker_oauth2_code=code)
     if user is None:
-        return HttpResponse('invalid code or idapi error')
+        return login_error(request, 'invalid_code_or_idapi_err', callback)
     del request.session['oauth2_state']
 
     django.contrib.auth.login(request, user)
