@@ -86,9 +86,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
   the API server and obtain API tokens. This list should not
   contain any whitespace. If `DEBUG` is enabled, any origin can
   submit Persona assertions or delegate login to the API server.
-* `TEACH_SITE_CLUBS_PAGE` is the URL to the Clubs page on the Teach
-  site, used when sending emails to users. It defaults to
-  https://teach.mozilla.org/clubs/.
+* `TEACH_SITE_URL` is the URL to the Teach site, used when sending
+  emails to users, among other things. It defaults to
+  https://teach.mozilla.org.
 
 ### Deprecated Environment Variables
 

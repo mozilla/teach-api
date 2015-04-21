@@ -50,7 +50,7 @@ class ClubViewSet(viewsets.ModelViewSet):
             subject=email.CREATE_MAIL_SUBJECT,
             message=email.CREATE_MAIL_BODY % {
                 'username': self.request.user.username,
-                'teach_site_clubs_page': settings.TEACH_SITE_CLUBS_PAGE
+                'TEACH_SITE_URL': settings.TEACH_SITE_URL
             },
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[self.request.user.email],

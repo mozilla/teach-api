@@ -41,8 +41,8 @@ IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 
-TEACH_SITE_CLUBS_PAGE = os.environ.get('TEACH_SITE_CLUBS_PAGE',
-                                       'https://teach.mozilla.org/clubs/')
+TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL',
+                                'https://teach.mozilla.org')
 
 if 'ADMIN_PROTECTION_USERPASS' in os.environ:
     ADMIN_PROTECTION_USERPASS = os.environ['ADMIN_PROTECTION_USERPASS']
