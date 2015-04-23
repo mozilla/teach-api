@@ -1,1 +1,1 @@
-web: gunicorn teach.wsgi
+web: newrelic-admin run-program gunicorn teach.wsgi

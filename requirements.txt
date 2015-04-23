@@ -2,3 +2,6 @@
 
 # Only required if using Postgres as a backend.
 psycopg2==2.5.2
+
+# For optional newrelic support.
+newrelic==2.50.0.39
