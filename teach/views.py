@@ -75,6 +75,11 @@ def oauth2_authorize(request):
     }))
 
 def login_error(request, error_code, callback):
+    try:
+        import newrelic.agent
+        newrelic.agent.record_custom_metric('Custom/OAuth_%s' % error_code, 1)
+    except ImportError:
+        pass
     return render(request, 'teach/oauth2_callback_error.html', {
         'error_code': error_code,
         'callback': callback
