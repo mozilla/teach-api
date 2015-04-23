@@ -91,7 +91,9 @@ def oauth2_callback(request):
         return HttpResponseRedirect(callback)
     if state is None:
         return login_error(request, 'missing_state', callback)
-    if expected_state is None or state != expected_state:
+    if expected_state is None:
+        return login_error(request, 'missing_session_state', callback)
+    if state != expected_state:
         return login_error(request, 'invalid_state', callback)
     if code is None:
         return login_error(request, 'missing_code', callback)

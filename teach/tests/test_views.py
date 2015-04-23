@@ -196,7 +196,7 @@ class OAuth2EndpointTests(TestCase):
 
     def test_callback_fails_when_state_missing_from_session(self):
         response = self.client.get('/auth/oauth2/callback?state=bad')
-        self.assertCallbackErrorCode(response, 'invalid_state')
+        self.assertCallbackErrorCode(response, 'missing_session_state')
 
     @mock.patch('teach.views.get_random_string', return_value='abcd')
     def test_callback_fails_when_state_is_incorrect(self, _):
