@@ -133,8 +133,18 @@ class AuthStatusTests(TestCase):
         response = self.view(req)
         self.assertEqual(response.status_code, 200)
         content = json.loads(response.content)
+        self.assertTrue('admin_url' not in content)
         self.assertEqual(content['username'], 'foo')
         self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
+
+    @override_settings(ORIGIN='http://server')
+    def test_admin_url_is_provided_when_staff_is_logged_in(self):
+        self.user.is_staff = True
+        req = self.get_request(user=self.user,
+                               HTTP_ORIGIN='http://example.org')
+        response = self.view(req)
+        content = json.loads(response.content)
+        self.assertEqual(content['admin_url'], 'http://server/admin/')
 
 def get_query(url):
     urlinfo = urlparse.urlparse(url)

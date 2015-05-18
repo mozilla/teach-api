@@ -4,6 +4,7 @@ import django.contrib.auth
 from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.crypto import get_random_string
@@ -128,10 +129,14 @@ def json_response(res, data):
 
 def info_for_user(res, user):
     token, created = Token.objects.get_or_create(user=user)
-    return json_response(res, {
+    body = {
         'token': token.key,
         'username': user.username
-    })
+    }
+    if user.is_staff:
+        body['admin_url'] = '%s%s' % (settings.ORIGIN,
+                                      reverse('admin:index'))
+    return json_response(res, body)
 
 @require_POST
 @csrf_exempt
