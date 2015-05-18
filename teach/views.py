@@ -76,6 +76,11 @@ def oauth2_authorize(request):
     }))
 
 def login_error(request, error_code, callback):
+    try:
+        import newrelic.agent
+        newrelic.agent.record_custom_metric('Custom/OAuth_%s' % error_code, 1)
+    except ImportError:
+        pass
     return render(request, 'teach/oauth2_callback_error.html', {
         'error_code': error_code,
         'callback': callback
@@ -92,7 +97,9 @@ def oauth2_callback(request):
         return HttpResponseRedirect(callback)
     if state is None:
         return login_error(request, 'missing_state', callback)
-    if expected_state is None or state != expected_state:
+    if expected_state is None:
+        return login_error(request, 'missing_session_state', callback)
+    if state != expected_state:
         return login_error(request, 'invalid_state', callback)
     if code is None:
         return login_error(request, 'missing_code', callback)
