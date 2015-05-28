@@ -3,6 +3,15 @@ from django.contrib.auth.models import User
 from geopy.geocoders import Nominatim
 
 class Club(models.Model):
+    PENDING = 'pending'
+    APPROVED = 'approved'
+    DENIED = 'denied'
+    STATUS_CHOICES = (
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (DENIED, 'Denied')
+    )
+
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -42,6 +51,13 @@ class Club(models.Model):
                    "Leave blank to automatically determine."),
         blank=True,
         null=True
+    )
+
+    status = models.CharField(
+        help_text="Current approval status of the club.",
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=APPROVED
     )
 
     is_active = models.BooleanField(
