@@ -26,7 +26,8 @@ class ClubSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Club
         fields = ('url', 'name', 'website', 'description', 'location',
-                  'latitude', 'longitude', 'owner')
+                  'latitude', 'longitude', 'owner', 'status')
+        read_only_fields = ('status',)
 
     def get_owner(self, obj):
         return obj.owner.username
@@ -45,7 +46,10 @@ class ClubViewSet(viewsets.ModelViewSet):
                           IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
-        club = serializer.save(owner=self.request.user)
+        club = serializer.save(
+            owner=self.request.user,
+            status=Club.PENDING
+        )
         send_mail(
             subject=email.CREATE_MAIL_SUBJECT,
             message=email.CREATE_MAIL_BODY % {
@@ -73,6 +77,12 @@ class ClubViewSet(viewsets.ModelViewSet):
                 # We don't want send failure to prevent a success response.
                 fail_silently=True
             )
+
+    def perform_update(self, serializer):
+        if serializer.instance.status == Club.DENIED:
+            serializer.save(status=Club.PENDING)
+        else:
+            serializer.save()
 
     def perform_destroy(self, serializer):
         instance = Club.objects.get(pk=serializer.pk)

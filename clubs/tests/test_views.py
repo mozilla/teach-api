@@ -20,7 +20,8 @@ class ClubViewSetTests(TestCase):
             description='This is my club.',
             location='Somewhere',
             latitude=5,
-            longitude=6
+            longitude=6,
+            status='approved'
         )
         club.save()
         self.club = club
@@ -36,7 +37,8 @@ class ClubViewSetTests(TestCase):
             'description': 'This is my club.',
             'location': 'Somewhere',
             'latitude': 5,
-            'longitude': 6
+            'longitude': 6,
+            'status': 'approved'
         }])
 
     def create_club(self):
@@ -49,6 +51,30 @@ class ClubViewSetTests(TestCase):
             'latitude': 1,
             'longitude': 2
         })
+
+    def test_create_clubs_sets_status_to_pending(self):
+        response = self.create_club()
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['status'], 'pending')
+
+    def test_update_clubs_changes_status_from_denied_to_pending(self):
+        self.club.status = 'denied'
+        self.club.save()
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch('/api/clubs/1/', {'description': 'u'})
+        self.assertEqual(response.data['status'], 'pending')
+
+    def test_update_clubs_does_not_change_status_if_already_approved(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch('/api/clubs/1/', {'description': 'u'})
+        self.assertEqual(response.data['status'], 'approved')
+
+    def test_update_clubs_does_not_change_status_if_already_pending(self):
+        self.club.status = 'pending'
+        self.club.save()
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.patch('/api/clubs/1/', {'description': 'u'})
+        self.assertEqual(response.data['status'], 'pending')
 
     def test_create_clubs_sets_owner(self):
         response = self.create_club()
