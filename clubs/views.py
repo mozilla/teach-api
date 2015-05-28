@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework import serializers, viewsets, permissions
@@ -44,6 +45,12 @@ class ClubViewSet(viewsets.ModelViewSet):
     serializer_class = ClubSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly,)
+
+    def get_queryset(self):
+        q = Q(status=Club.APPROVED)
+        if self.request.user.is_authenticated():
+            q = q | Q(owner=self.request.user)
+        return self.queryset.filter(q)
 
     def perform_create(self, serializer):
         club = serializer.save(

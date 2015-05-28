@@ -103,6 +103,29 @@ class ClubViewSetTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [])
 
+    def test_list_clubs_only_shows_approved_clubs_for_anonymous_users(self):
+        self.club.status = 'pending'
+        self.club.save()
+        response = self.client.get('/api/clubs/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
+
+    def test_list_clubs_hides_non_approved_clubs_of_other_users(self):
+        self.club.status = 'pending'
+        self.club.save()
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get('/api/clubs/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
+
+    def test_list_clubs_shows_non_approved_clubs_of_logged_in_user(self):
+        self.club.status = 'pending'
+        self.club.save()
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get('/api/clubs/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+
     def test_patch_clubs_without_auth_fails(self):
         response = self.client.patch('/api/clubs/1/', {'name': 'u'})
         self.assertEqual(response.status_code, 403)
