@@ -24,6 +24,7 @@ Name: %(club_name)s
 Location: %(club_location)s
 Website: %(club_website)s
 Description: %(club_description)s
+Email: %(email)s
 
 This club is currently in a pending state and you can approve or deny it
 for inclusion in the public map at:
