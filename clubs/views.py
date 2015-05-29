@@ -40,6 +40,21 @@ class ClubViewSet(viewsets.ModelViewSet):
     authentication. The user who created a club is its **owner** and
     they are the only one who can make future edits to it, aside
     from staff.
+
+    Clubs also have an approval flow they must proceed through. The
+    state of this approval is reflected in the club's **status**.
+
+    When a club is first created through the REST API, its status is
+    set to `"pending"` and Teach staff are alerted through email.
+
+    Depending on the result of review, the state may later be modified
+    by Teach staff to `"approved"` or `"denied"`.
+
+    If a club's status is pending or denied, only the club's owner
+    can view it.
+
+    If a club's status is denied and its owner updates any of the
+    club's metadata, the status is changed to pending.
     """
 
     queryset = Club.objects.filter(is_active=True)
