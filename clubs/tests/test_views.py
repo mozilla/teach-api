@@ -89,12 +89,14 @@ class ClubViewSetTests(TestCase):
         self.assertEqual(msg.to, ['user2@example.org'])
         self.assertRegexpMatches(msg.body, 'user2')
 
-    @override_settings(TEACH_STAFF_EMAILS=['foo@bar.org'])
+    @override_settings(TEACH_STAFF_EMAILS=['foo@bar.org'],
+                       ORIGIN='https://s')
     def test_create_clubs_sends_email_to_teach_staff(self):
         response = self.create_club()
         msg = mail.outbox[1]
         self.assertEqual(msg.to, ['foo@bar.org'])
         self.assertRegexpMatches(msg.body, 'user2@example.org')
+        self.assertRegexpMatches(msg.body, 'https://s/admin/clubs/club/2/')
 
     def test_list_clubs_only_shows_active_clubs(self):
         self.club.is_active = False

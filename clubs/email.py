@@ -15,15 +15,20 @@ on behalf of the Mozilla Learning team
 P.S. Be sure to check out our tips for running clubs at %(TEACH_SITE_URL)s/clubs/ !
 """
 
-CREATE_MAIL_STAFF_SUBJECT = 'A new Club has been added to the map'
+CREATE_MAIL_STAFF_SUBJECT = 'Please review: new club has been submitted'
 
 CREATE_MAIL_STAFF_BODY = """\
-%(username)s has added their Club to the map.
+%(username)s would like to add their Club to the map.
 
 Name: %(club_name)s
 Location: %(club_location)s
 Website: %(club_website)s
 Description: %(club_description)s
 
-You may want to email them at %(email)s to say hello!
+This club is currently in a pending state and you can approve or deny it
+for inclusion in the public map at:
+
+%(admin_url)s
+
+You may also want to email them at %(email)s to say hello!
 """

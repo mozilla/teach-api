@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework import serializers, viewsets, permissions
@@ -77,7 +78,11 @@ class ClubViewSet(viewsets.ModelViewSet):
                     'club_name': club.name,
                     'club_location': club.location,
                     'club_website': club.website,
-                    'club_description': club.description
+                    'club_description': club.description,
+                    'admin_url': '%s%s' % (
+                        settings.ORIGIN,
+                        reverse('admin:clubs_club_change', args=(club.id,))
+                    )
                 },
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=settings.TEACH_STAFF_EMAILS,
