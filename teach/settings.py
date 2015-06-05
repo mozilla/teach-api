@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'clubs',
+    'groups',
 )
 
 if IDAPI_ENABLE_FAKE_OAUTH2:

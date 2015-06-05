@@ -24,6 +24,7 @@ You will be asked if you want to create an administrative user.
 Respond affirmatively, fill out the details, and then run:
 
 ```
+python manage.py initgroups
 python manage.py runserver
 ```
 
