@@ -13,6 +13,7 @@ class Club(models.Model):
     )
 
     teach_staff_permissions = ('add', 'change')
+    regional_coordinator_permissions = ('change',)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

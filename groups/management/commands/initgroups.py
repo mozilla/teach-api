@@ -31,6 +31,8 @@ TEACH_STAFF_PERMS = (
     'change_user',
 ) + get_perms_from_model_attr('teach_staff_permissions')
 
+RC_PERMS = get_perms_from_model_attr('regional_coordinator_permissions')
+
 class Command(BaseCommand):
     help = '''\
     Initializes some helpful initial permission groups.
@@ -54,6 +56,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.verbosity = int(kwargs['verbosity'])
         self.set_perms('Teach Staff', TEACH_STAFF_PERMS)
+        self.set_perms('Regional Coordinators', RC_PERMS)
         self.stdout.write("Done.")
         self.stdout.write("Please do not manually change these "
                           "groups; they may be updated in the future.")
