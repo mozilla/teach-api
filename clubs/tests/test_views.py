@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from ..models import Club
 from ..views import ClubViewSet
 
-class ClubViewSetTests(TestCase):
+class ClubTestCase(TestCase):
     def setUp(self):
         self.user1 = User.objects.create_user('user1')
         self.user2 = User.objects.create_user('user2', 'user2@example.org')
@@ -26,6 +26,7 @@ class ClubViewSetTests(TestCase):
         club.save()
         self.club = club
 
+class ClubViewSetTests(ClubTestCase):
     def test_list_clubs_works(self):
         response = self.client.get('/api/clubs/')
         self.assertEqual(response.status_code, 200)
