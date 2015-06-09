@@ -4,8 +4,11 @@ from django.forms import ModelForm
 from . import models
 import teach.admin as teach_admin
 
+def owner_email(obj):
+    return obj.owner.email
+
 class ClubAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'created', 'modified', 'owner',
-                    'status', 'is_active')
+                    owner_email, 'status', 'is_active')
 
 teach_admin.site.register(models.Club, ClubAdmin)
