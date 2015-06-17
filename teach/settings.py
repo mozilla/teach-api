@@ -44,6 +44,9 @@ LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL',
                                 'https://teach.mozilla.org')
 
+DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET')
+DISCOURSE_SSO_ORIGIN = os.environ.get('DISCOURSE_SSO_ORIGIN')
+
 if 'ADMIN_PROTECTION_USERPASS' in os.environ:
     ADMIN_PROTECTION_USERPASS = os.environ['ADMIN_PROTECTION_USERPASS']
 
@@ -110,6 +113,9 @@ if IDAPI_ENABLE_FAKE_OAUTH2:
     INSTALLED_APPS += (
         'fake_oauth2',
     )
+
+if DISCOURSE_SSO_SECRET or is_running_test_suite():
+    INSTALLED_APPS += ('discourse_sso',)
 
 MIDDLEWARE_CLASSES = ()
 

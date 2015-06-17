@@ -45,3 +45,8 @@ if settings.IDAPI_ENABLE_FAKE_OAUTH2:
     urlpatterns += [
         url(r'^fake_oauth2/', include('fake_oauth2.urls')),
     ]
+
+if 'discourse_sso' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^discourse_sso/', include('discourse_sso.urls'))
+    ]
