@@ -189,6 +189,18 @@ class OAuth2EndpointTests(TestCase):
         self.client.get('/auth/oauth2/authorize')
         self.assertEqual(self.client.session['oauth2_state'], 'abcd')
 
+    @override_settings(ORIGIN='http://teach')
+    def test_authorize_remembers_valid_next(self):
+        qs = urllib.urlencode({'next': '/boop'})
+        response = self.client.get('/auth/oauth2/authorize?%s' % qs)
+        self.assertEqual(self.client.session['oauth2_callback'],
+                         'http://teach/boop')
+
+    def test_authorize_ignores_invalid_next(self):
+        qs = urllib.urlencode({'next': 'http://evil.com/bad'})
+        response = self.client.get('/auth/oauth2/authorize?%s' % qs)
+        self.assertFalse('oauth2_callback' in self.client.session)
+
     def test_authorize_remembers_valid_callback(self):
         qs = urllib.urlencode({'callback': 'http://frontend/blah'})
         response = self.client.get('/auth/oauth2/authorize?%s' % qs)

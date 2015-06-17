@@ -6,7 +6,7 @@ from hashlib import sha256
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required
 
 if hasattr(hmac, 'compare_digest'):
     compare_digest = hmac.compare_digest
@@ -53,8 +53,8 @@ def user_info_qs(user, nonce):
         'name': user_name.encode('utf8')
     }))
 
+@login_required
 def sso_endpoint(request):
-    # TODO: Make the user log in if they aren't already.
     try:
         nonce = unpack_and_verify_payload(request.GET)['nonce']
     except Exception:

@@ -243,6 +243,8 @@ CORS_API_LOGIN_ORIGINS = os.environ.get(
     ''
 ).split(',')
 
+LOGIN_URL = 'teach.views.oauth2_authorize'
+
 if is_running_test_suite():
     PASSWORD_HASHERS = (
         'django.contrib.auth.hashers.MD5PasswordHasher',

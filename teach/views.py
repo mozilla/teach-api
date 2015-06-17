@@ -56,6 +56,10 @@ def validate_callback(callback):
 
 def set_callback(request):
     callback = validate_callback(request.GET.get('callback', ''))
+    if (not callback
+        and 'next' in request.GET
+        and request.GET['next'].startswith('/')):
+        callback = settings.ORIGIN + request.GET['next']
     if callback:
         request.session['oauth2_callback'] = callback
 
