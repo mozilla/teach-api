@@ -47,6 +47,7 @@ def user_info_qs(user, nonce):
     user_name = user.get_full_name() or user.username
     return urllib.urlencode(pack_and_sign_payload({
         'nonce': nonce,
+        'require_activation': 'true',
         'email': str(user.email),
         'external_id': str(user.id),
         'username': str(user.username),

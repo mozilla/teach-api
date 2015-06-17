@@ -35,6 +35,7 @@ class EndpointTests(TestCase):
         query_dict = dict(urlparse.parse_qsl(loc.query))
         self.assertEqual(unpack_and_verify_payload(query_dict), {
             'email': 'foo@example.org',
+            'require_activation': 'true',
             'external_id': str(self.user.id),
             'name': 'foo',
             'nonce': '1',
