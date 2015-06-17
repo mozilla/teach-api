@@ -90,6 +90,11 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
 * `TEACH_SITE_URL` is the URL to the Teach site, used when sending
   emails to users, among other things. It defaults to
   https://teach.mozilla.org.
+* `DISCOURSE_SSO_SECRET` is the SSO secret for Discourse single sign-on.
+  For more information, see [discourse_sso/README.md][]. If empty or
+  undefined, Discourse SSO functionality will be disabled.
+* `DISCOURSE_SSO_ORIGIN` is the origin of your Discourse site. If
+  `DISCOURSE_SSO_SECRET` is set, this must also be set.
 
 ### Deprecated Environment Variables
 
@@ -117,3 +122,4 @@ production over http.**
   [teach]: https://github.com/mozilla/teach.webmaker.org
   [twelve-factor]: http://12factor.net/
   [djrill]: https://github.com/brack3t/Djrill
+  [discourse_sso/README.md]: https://github.com/mozilla/teach-api/tree/master/discourse_sso#readme
