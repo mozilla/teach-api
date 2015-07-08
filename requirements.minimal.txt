@@ -1,4 +1,4 @@
-Django==1.7.7
+Django==1.7.9
 dj-static==0.0.6
 gunicorn==18.0
 static3==0.5.1
