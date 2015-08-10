@@ -3,16 +3,22 @@ CREATE_MAIL_SUBJECT = 'Thanks for joining the global movement to teach the web!'
 CREATE_MAIL_BODY = """\
 %(username)s,
 
-You did it! You put your city on the map and showed your dedication to increasing web literacy around the world. This is a big first step, so thank you for all that you are doing to teach the web.
+Thanks for your interest in teaching the web!
 
-Whether you are a new club leader or an expert at running clubs, we recommend you get started by meeting others in our community. Join the conversation in our discussion forum [http://discourse.webmaker.org/category/clubs], or tell us what you're teaching on Twitter using hashtag #teachtheweb.
+Get started right away by guiding a group of learners through these featured activities: %(TEACH_SITE_URL)s/activities/
 
-A member of our team will send you an email soon to see how you're doing and make sure your club is on the road to success!
+We believe in the power of peer learning. That's why we match each Mozilla Club Captain with a volunteer Regional Coordinator who can support you in getting started and making the most of this program.
 
-Michelle Thorne,
-on behalf of the Mozilla Learning team
+Please note: Our first cohort of Regional Coordinators is in full swing right now, so you've been added to our waiting list. We'll match you with a Regional Coordinator as soon as we can. Your club will not show up on the map until you've been matched up.
 
-P.S. Be sure to check out our tips for running clubs at %(TEACH_SITE_URL)s/clubs/ !
+To begin on your own, check out these resources to organize and teach your learners: http://mozilla.github.io/learning-networks/clubs/#resources
+
+Please also say hello in our discussion forum (http://discourse.webmaker.org/category/clubs) or tweet using hashtag #teachtheweb if you need any help.
+
+Let's teach the web!
+
+Michelle Thorne
+on behalf of the Mozilla Learning Network
 """
 
 CREATE_MAIL_STAFF_SUBJECT = 'Please review: new club has been submitted'
