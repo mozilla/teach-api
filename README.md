@@ -28,6 +28,12 @@ python manage.py initgroups
 python manage.py runserver
 ```
 
+If you are running the Teach-API in a VM, and you wish to access the Django instance from outside the VM, you will need to have your VM use bridged networking (to make it part of your preexisting local network), look up your VM's IPv4 address with this network setting, and then use the following `runserver` command (using `192.168.1.1` as example VM IP):
+
+```
+python manage.py runserver 192.168.1.1:8000
+```
+
 ## Environment Variables
 
 Unlike traditional Django settings, we use environment variables
