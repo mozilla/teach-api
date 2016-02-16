@@ -28,8 +28,8 @@ class ClubSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Club
         fields = ('url', 'name', 'website', 'description', 'location',
-                  'latitude', 'longitude', 'owner', 'status')
-        read_only_fields = ('status',)
+                  'latitude', 'longitude', 'owner', 'status', 'denial',)
+        read_only_fields = ('status','denial',)
 
     def get_owner(self, obj):
         return obj.owner.username

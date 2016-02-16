@@ -6,10 +6,25 @@ class Club(models.Model):
     PENDING = 'pending'
     APPROVED = 'approved'
     DENIED = 'denied'
+
     STATUS_CHOICES = (
         (PENDING, 'Pending'),
         (APPROVED, 'Approved'),
         (DENIED, 'Denied')
+    )
+
+    NOT_INTERESTED = 'no longer interested'
+    UNQUALIFIED = 'not qualified'
+    NO_RESPONSE = 'no response'
+    BAD_EMAIL = 'cannot be emailed'
+
+    DENIAL_CHOICES = (
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (NOT_INTERESTED, 'No longer interested'),
+        (UNQUALIFIED, 'Not qualified'),
+        (NO_RESPONSE, 'No response after initial application'),
+        (BAD_EMAIL, 'Applicant cannot be emailed')
     )
 
     teach_staff_permissions = ('add', 'change')
@@ -60,6 +75,13 @@ class Club(models.Model):
         help_text="Current approval status of the club.",
         max_length=10,
         choices=STATUS_CHOICES,
+        default=APPROVED
+    )
+
+    denial = models.CharField(
+        help_text="Reason for denial, if denied.",
+        max_length=10,
+        choices=DENIAL_CHOICES,
         default=APPROVED
     )
 
