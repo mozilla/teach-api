@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='club',
             name='denial',
-            field=models.CharField(default=b'no longer interested', help_text=b'Reason for denial, if denied.', max_length=10, choices=[(b'pending',b'Pending'), (b'approved',b'Approved'), (b'no longer interested', b'No longer interested'), (b'not qualified', b'Not qualified'), (b'no response', b'No response after initial application'), (b'cannot be emailed', b'Applicant cannot be emailed')]),
+            field=models.CharField(default=b'pending', help_text=b'Reason for denial, if denied.', max_length=10, choices=[(b'pending',b'Pending'), (b'approved',b'Approved'), (b'no longer interested', b'No longer interested'), (b'not qualified', b'Not qualified'), (b'no response', b'No response after initial application'), (b'cannot be emailed', b'Applicant cannot be emailed')]),
             preserve_default=True,
         ),
     ]
