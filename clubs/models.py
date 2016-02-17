@@ -82,7 +82,7 @@ class Club(models.Model):
         help_text="Reason for denial, if denied.",
         max_length=10,
         choices=DENIAL_CHOICES,
-        default=APPROVED
+        default=PENDING
     )
 
     is_active = models.BooleanField(
