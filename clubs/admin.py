@@ -43,8 +43,8 @@ def owner_email(obj):
 class ClubAdmin(admin.ModelAdmin):
     actions = [export_csv]
     list_display = ('name', 'location', 'created', 'modified', 'owner',
-                    owner_email, 'status', 'is_active')
-    list_filter = ('status', 'is_active',)
+                    owner_email, 'status', 'denial', 'is_active',)
+    list_filter = ('status', 'denial', 'is_active',)
     readonly_fields = (owner_email,)
 
 teach_admin.site.register(models.Club, ClubAdmin)

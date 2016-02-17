@@ -21,7 +21,8 @@ class ClubTestCase(TestCase):
             location='Somewhere',
             latitude=5,
             longitude=6,
-            status='approved'
+            status='approved',
+            denial='approved'
         )
         club.save()
         self.club = club
@@ -39,7 +40,8 @@ class ClubViewSetTests(ClubTestCase):
             'location': 'Somewhere',
             'latitude': 5,
             'longitude': 6,
-            'status': 'approved'
+            'status': 'approved',
+            'denial': 'approved'            
         }])
 
     def create_club(self):
