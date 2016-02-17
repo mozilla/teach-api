@@ -5,3 +5,6 @@ python manage.py initdb
 
 # Run Django migrations.
 python manage.py migrate
+
+# Start up the system with newrelic monitoring
+newrelic-admin run-program gunicorn teach.wsgi
