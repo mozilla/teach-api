@@ -41,8 +41,7 @@ IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 
-TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL',
-                                'https://teach.mozilla.org')
+TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL', 'https://teach.mozilla.org')
 
 DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET')
 DISCOURSE_SSO_ORIGIN = os.environ.get('DISCOURSE_SSO_ORIGIN')
@@ -107,6 +106,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'clubs',
     'groups',
+    'credly'
 )
 
 if IDAPI_ENABLE_FAKE_OAUTH2:
@@ -236,7 +236,7 @@ TEMPLATE_DIRS = (
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/.*$'
+CORS_URLS_REGEX = r'^(/api/).*$'
 
 CORS_API_LOGIN_ORIGINS = os.environ.get(
     'CORS_API_LOGIN_ORIGINS',
