@@ -1,6 +1,10 @@
 import json
 import urlparse
+import requests
+
 import django.contrib.auth
+import django_browserid.base
+
 from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,13 +12,14 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.crypto import get_random_string
-import django_browserid.base
-import requests
+
 from rest_framework import routers
 from rest_framework.authtoken.models import Token
 
 from . import webmaker, new_webmaker
 from .new_webmaker import get_idapi_url
+
+# AND THEN THE CODE
 
 def get_verifier():
     return django_browserid.base.RemoteVerifier()
@@ -141,7 +146,7 @@ def json_response(res, data):
 def info_for_user(res, user):
     token, created = Token.objects.get_or_create(user=user)
     body = {
-        'token': token.key,
+        'token': token.key, # The token information seems like it should never make it to the client..?
         'username': user.username
     }
     if user.is_staff:

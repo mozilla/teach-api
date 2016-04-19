@@ -11,6 +11,7 @@ geopy==1.9.1
 django-cors-headers==1.0.0
 django-csp==2.0.3
 Markdown==2.6.1
+slumber==0.7.1
 
 # For tests to run...
 mock==1.0.1

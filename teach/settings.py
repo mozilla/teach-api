@@ -34,6 +34,13 @@ if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
         CORS_API_LOGIN_ORIGINS='*'
     )
 
+CREDLY_API_URL = os.environ.get('CREDLY_API_URL', '.')
+CREDLY_API_KEY = os.environ.get('CREDLY_API_KEY', 'missing')
+CREDLY_APP_SECRET = os.environ.get('CREDLY_APP_SECRET', 'missing')
+CREDLY_ACCOUNT_EMAIL = os.environ.get('CREDLY_ACCOUNT_EMAIL', 'missing@example.org')
+CREDLY_ACCOUNT_PASSWORD = os.environ.get('CREDLY_ACCOUNT_PASSWORD', 'missing')
+MozillaAccountId = os.environ.get('MozillaAccountId', -1)
+
 IDAPI_URL = os.environ.get('IDAPI_URL', 'https://id.webmaker.org')
 IDAPI_CLIENT_ID = os.environ.get('IDAPI_CLIENT_ID')
 IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
@@ -105,7 +112,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'clubs',
-    'groups'
+    'groups',
+    'credly'
 )
 
 if IDAPI_ENABLE_FAKE_OAUTH2:
