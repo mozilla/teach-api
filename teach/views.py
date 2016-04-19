@@ -146,12 +146,10 @@ def json_response(res, data):
 def info_for_user(res, user):
     token, created = Token.objects.get_or_create(user=user)
     body = {
-        'token': token.key, # The token information seems like it should never make it to the client..?
         'username': user.username
     }
     if user.is_staff:
-        body['admin_url'] = '%s%s' % (settings.ORIGIN,
-                                      reverse('admin:index'))
+        body['admin_url'] = '%s%s' % (settings.ORIGIN, reverse('admin:index'))
     return json_response(res, body)
 
 @require_POST
