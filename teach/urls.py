@@ -13,6 +13,7 @@ router = TeachRouter()
 router.register(r'clubs', ClubViewSet)
 
 urlpatterns = [
+    url(r'^auth/persona$', 'teach.views.persona_assertion_to_api_token'),
     url(r'^auth/status$', 'teach.views.get_status'),
     url(r'^auth/logout$', 'teach.views.logout'),
 

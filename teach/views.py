@@ -176,6 +176,39 @@ def get_status(request):
         'username': None
     })
 
+@require_POST
+@csrf_exempt
+def persona_assertion_to_api_token(request, backend=None):
+    res = check_origin(request)
+    if res is None:
+        return HttpResponse('invalid origin', status=403)
+    assertion = request.POST.get('assertion')
+    if not assertion:
+        res.status_code = 400
+        res.content = 'assertion required'
+        return res
+    if backend is None: backend = webmaker.WebmakerBrowserIDBackend()
+    user = backend.authenticate(assertion=assertion,
+                                audience=request.META.get('HTTP_ORIGIN'),
+                                request=request)
+    if user is None:
+        res.status_code = 403
+        res.content = 'invalid assertion or email'
+        return res
+    return info_for_user(res, user)
+
+def api_introduction(request):
+    if request.user.is_authenticated():
+        token, created = Token.objects.get_or_create(user=request.user)
+        token = token.key
+    else:
+        token = '0eafe9fb9111e93bdc67a899623365a21f69065b'
+    return render(request, 'teach/api-introduction.html', {
+        'ORIGIN': settings.ORIGIN,
+        'CORS_API_LOGIN_ORIGINS': settings.CORS_API_LOGIN_ORIGINS,
+        'token': token
+    })
+
 # This is a really weird way of defining our own API root docs, but
 # it seems to be the only known one: http://stackoverflow.com/q/17496249
 class TeachRouter(routers.DefaultRouter):
