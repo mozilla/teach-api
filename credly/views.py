@@ -74,13 +74,13 @@ def APICredentials():
 '''
   FIXME: TODO: this is repeated from teach/views.py -> refactor
 '''
-def check_origin(request):
+def form_http_response(request, status_override=200):
     origin = request.META.get('HTTP_ORIGIN')
     valid_origins = settings.CORS_API_LOGIN_ORIGINS
     if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
             return None
-    res = HttpResponse()
+    res = HttpResponse(status=status_override)
     res['access-control-allow-origin'] = origin
     return res
 
@@ -129,7 +129,7 @@ def get_our_credly():
   Bootstrap a user instance and response object for an incoming request.
 '''
 def boostrap_no_credly(request):
-    res = check_origin(request)
+    res = form_http_response(request)
     res['access-control-allow-credentials'] = 'true'
     user = request.user
     return (res, user)
@@ -232,25 +232,29 @@ def request_credly_token(user, email=None, password=None):
             is_member = moz_credly.members().get(email=email, access_token=moz_credly)
             # if we've not hit an exception, this is a known credly user and we should
             # be able to get an access and refresh token associated with their account.
-            result = credly.authenticate.post()
-            token = result['data']
-            print "Linked teach-api user to Credly."
-            save_user_token(user.id, token)
-        except HttpNotFoundError as not_found_error:
+            try:
+                result = credly.authenticate.post()
+                token = result['data']
+                save_user_token(user.id, token)
+                print "Linked teach-api user to Credly."
+            except HttpClientError as clienterror:
+                token = clienterror.response.status_code
+                pass
+        except HttpNotFoundError as member_error:
             print "No Credly account found for the supplied email, creating a new account..."
             # not a known credly user, we'll have to register them
+            headers = XAPIHeaders()
+            params = { 'access_token': moz_token }
+            data = { 'email': email, 'password': password, 'is_email_verified': 1 }
+            url = CREDLY_API_URL + 'authenticate/register'
             try:
-                headers = XAPIHeaders()
-                params = { 'access_token': moz_token }
-                data = { 'email': email, 'password': password, 'is_email_verified': 1 }
-                url = CREDLY_API_URL + 'authenticate/register'
                 result = requests.post(url, params=params, headers=headers, data=data)
                 response = json.loads(result.text)
                 token = response['data']
-                print "Created new Credly account for teach-api user."
                 save_user_token(user.id, token)
+                print "Created new Credly account for teach-api user."
             except HttpClientError as clienterror:
-                print clienterror
+                token = clienterror.response.status_code
                 pass
             pass
 
@@ -407,14 +411,14 @@ def ensure_login(request):
     token = request_credly_token(user, email, password)
 
     if token is False:
-        return json_response(res, {
-            'result': 'failed',
-            'reason': 'missing token'
-        })
+        res = form_http_response(request, 403)
+        return json_response(res, { 'result': 'error', 'reason': 'missing token' })
 
-    return json_response(res, {
-        'result': 'obtained new access and refresh tokens'
-    })
+    elif type(token) == int:
+        res = form_http_response(request, token)
+        return json_response(res, { 'result': 'error' })
+
+    return json_response(res, { 'result': 'obtained new access and refresh tokens' })
 
 '''
   API GET enpoind for getting the list of Mozilla badges
