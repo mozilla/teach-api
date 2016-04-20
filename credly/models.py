@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.shortcuts import get_object_or_404
+
+from django.utils import timezone
 from datetime import datetime
 
 class UserCredlyProfile(models.Model):
@@ -8,7 +10,7 @@ class UserCredlyProfile(models.Model):
     access_token = models.CharField(max_length=400)
     refresh_token = models.CharField(max_length=400)
     token_created = models.DateTimeField(auto_now_add=True)
-    token_refreshed = models.DateTimeField(auto_now_add=True, default=datetime.now)
+    token_refreshed = models.DateTimeField(auto_now_add=True, default=timezone.now)
 
 '''
   Create a new model record associated with an id.wmo login id
@@ -31,7 +33,7 @@ def save_user_token(user_id, data):
     if not user_credly_profile.access_token == data["token"]:
         user_credly_profile.access_token = data["token"]
         user_credly_profile.refresh_token = data["refresh_token"]
-        user_credly_profile.token_refreshed = datetime.now()
+        user_credly_profile.token_refreshed = timezone.now()
     try:
         user_credly_profile.save()
     except Exception as error:
@@ -55,7 +57,7 @@ def get_credly_token_age(user_id):
         user_credly_profile = get_object_or_404(UserCredlyProfile, user_id=user_id)
         if user_credly_profile.token_refreshed == None:
             return None
-        delta = datetime.now() - user_credly_profile.token_refreshed
+        delta = timezone.now() - user_credly_profile.token_refreshed
         return delta.days
     except Exception as error:
         return None

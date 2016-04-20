@@ -165,7 +165,7 @@ def get_member_data(credly, user):
 '''
 def get_access_token(user_id):
     profile = check_local_profile(user_id)
-    if profile == None:
+    if not profile:
         return None
     return profile.access_token;
 
@@ -224,7 +224,7 @@ def request_credly_token(user, email=None, password=None):
     token_age = get_credly_token_age(user.id)
 
     # no acccess_token was ever set, so set one up.
-    if token_age == None:
+    if not token_age:
         print "this user was never linked to Credly before. Linking..."
         moz_credly = get_our_credly()
         moz_token = get_our_access_token()
@@ -234,13 +234,24 @@ def request_credly_token(user, email=None, password=None):
             # be able to get an access and refresh token associated with their account.
             result = credly.authenticate.post()
             token = result['data']
+            print "Linked teach-api user to Credly."
             save_user_token(user.id, token)
-        except HttpNotFoundError as error:
+        except HttpNotFoundError as not_found_error:
+            print "No Credly account found for the supplied email, creating a new account..."
             # not a known credly user, we'll have to register them
-            #
-            # FIXME:TODO: make that work using credly.authenticate.register.post()
-            #
-            print error
+            try:
+                headers = XAPIHeaders()
+                params = { 'access_token': moz_token }
+                data = { 'email': email, 'password': password, 'is_email_verified': 1 }
+                url = CREDLY_API_URL + 'authenticate/register'
+                result = requests.post(url, params=params, headers=headers, data=data)
+                response = json.loads(result.text)
+                token = response['data']
+                print "Created new Credly account for teach-api user."
+                save_user_token(user.id, token)
+            except HttpClientError as clienterror:
+                print clienterror
+                pass
             pass
 
     # access_token is still good
@@ -250,6 +261,9 @@ def request_credly_token(user, email=None, password=None):
 
     # access token expired, user will have to reauthenticate with their password
     elif token_age > 90:
+        #
+        # FIXME:TODO: THIS SHOULD BE A CRON JOB OF SOME SORT BUT CAN LIVE HERE FOR NOW.
+        #
         print "a new access token needs to be requested"
         result = credly.authenticate.post()
         token = result['data']
@@ -322,7 +336,7 @@ def get_mozilla_badge(credly, badge_id):
 def get_mozilla_badges(credly=None, access_token=None):
     verbose = 1
     show_earned = 1
-    if access_token == None:
+    if not access_token:
         credly = get_our_credly()
         access_token = get_our_access_token()
         verbose = 0
@@ -348,11 +362,11 @@ def has_access(request):
     data = { 'access': False }
 
     # no user session means we have nothing to check
-    if user == None:
+    if not user:
         return json_response(res, data)
 
     # no credly token means the user needs to credly-login
-    if get_access_token(user.id) == None:
+    if not get_access_token(user.id):
         return json_response(res, data)
 
     # we have credly access for the user.
@@ -425,7 +439,7 @@ def badgelist(request):
     moz_badges = get_mozilla_badges(credly, access_token)
     moz_badge_ids = [n['id'] for n in moz_badges]
 
-    if not hasattr(user, 'email') or access_token == None:
+    if not hasattr(user, 'email') or not access_token:
         return json_response(res, {
             'badges': moz_badges
         })
@@ -489,7 +503,7 @@ def badge(request, badge_id):
     # 'this' badge
     single_badge = all_badges[index]
 
-    if access_token == None:
+    if not access_token:
         return json_response(res, {
             'badge': single_badge,
             'prev': prev,
