@@ -81,7 +81,8 @@ def form_http_response(request, status_override=200):
         if not (settings.DEBUG and valid_origins == ['*']):
             return None
     res = HttpResponse(status=status_override)
-    res['access-control-allow-origin'] = origin
+    #res['access-control-allow-origin'] = origin
+    res['access-control-allow-origin'] = '*'
     return res
 
 '''
