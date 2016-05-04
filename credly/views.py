@@ -76,6 +76,7 @@ def APICredentials():
 '''
 def form_http_response(request, status_override=200):
     origin = request.META.get('HTTP_ORIGIN')
+    print request.META
     valid_origins = settings.CORS_API_LOGIN_ORIGINS
     if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
