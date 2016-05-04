@@ -77,15 +77,11 @@ def APICredentials():
 def form_http_response(request, status_override=200):
     origin = request.META.get('HTTP_ORIGIN')
     valid_origins = settings.CORS_API_LOGIN_ORIGINS
-    # who is cleared to call us?
-    print "origin:", origin
-    print "valid origins:", valid_origins
     if not origin or origin not in valid_origins:
         if not (settings.DEBUG and valid_origins == ['*']):
             return None
     res = HttpResponse(status=status_override)
-    #res['access-control-allow-origin'] = origin
-    res['access-control-allow-origin'] = '*'
+    res['access-control-allow-origin'] = origin
     return res
 
 '''
