@@ -103,6 +103,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`.
   undefined, Discourse SSO functionality will be disabled.
 * `DISCOURSE_SSO_ORIGIN` is the origin of your Discourse site. If
   `DISCOURSE_SSO_SECRET` is set, this must also be set.
+* `CREDLY_API_KEY` Credly API key
+  `CREDLY_APP_SECRET` Credly App Secret
+   for more details see https://developers.credly.com/my-apps
 
 ### Deprecated Environment Variables
 

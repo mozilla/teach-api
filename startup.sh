@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-# Init the DB.
+# Init the DB (noop if already extant):
 python manage.py initdb
 
-# Run Django migrations.
+# Make Django migrations, just in case...
+python manage.py makemigrations
+
+# Then migrate up.
 python manage.py migrate
 
-# Start up the system with newrelic monitoring
+# Finally, start up the system with newrelic monitoring.
 newrelic-admin run-program gunicorn teach.wsgi

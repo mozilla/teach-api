@@ -135,7 +135,6 @@ class AuthStatusTests(TestCase):
         content = json.loads(response.content)
         self.assertTrue('admin_url' not in content)
         self.assertEqual(content['username'], 'foo')
-        self.assertRegexpMatches(content['token'], r'^[0-9a-f]+$')
 
     @override_settings(ORIGIN='http://server')
     def test_admin_url_is_provided_when_staff_is_logged_in(self):
@@ -348,7 +347,6 @@ class PersonaTokenToAPITokenTests(TestCase):
         response = self.request_with_assertion(email='foo@example.org')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json['username'], 'foo')
-        self.assertRegexpMatches(response.json['token'], r'^[0-9a-f]+$')
 
 def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(views))

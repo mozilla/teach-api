@@ -2,4 +2,7 @@
 staticfiles
 venv
 .env
+env
 *.sqlite3
+.idea
+.DS_Store
