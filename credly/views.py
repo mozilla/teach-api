@@ -245,7 +245,7 @@ def request_credly_token(user, email=None, password=None):
             # not a known credly user, we'll have to register them
             headers = XAPIHeaders()
             params = { 'access_token': moz_token }
-            data = { 'email': email, 'password': password, 'is_email_verified': 1 }
+            data = { 'email': email, 'password': password, 'display_name': user.username, 'is_email_verified': 1 }
             url = CREDLY_API_URL + 'authenticate/register'
             try:
                 result = requests.post(url, params=params, headers=headers, data=data)
