@@ -1,6 +1,9 @@
 import base64
 import json
 
+import httplib as http_client
+from urllib import quote
+
 from datetime import date, timedelta
 
 import requests;
@@ -555,6 +558,12 @@ def badge(request, badge_id):
 @require_http_methods(["POST", "OPTIONS"])
 @csrf_exempt
 def claim_badge(request, badge_id):
+
+# HTTP DEBUG: UNCOMMENT TO SEE HTTP REQUEST/RESPONSES WRITTEN TO THE CONSOLE
+#
+# HTTP DEBUG: UNCOMMENT TO SEE HTTP REQUEST/RESPONSES WRITTEN TO THE CONSOLE    oldval = http_client.HTTPConnection.debuglevel
+##    http_client.HTTPConnection.debuglevel = 1
+
     (res, user, credly) = bootstrap(request)
 
     # perform preflight clearance
@@ -578,7 +587,7 @@ def claim_badge(request, badge_id):
         # it, so we do a custom transform:
         evidencePayload = []
         for i, evidence in enumerate(evidences):
-            arg = 'evidences[' + str(i) + '][file]=' + evidence['file']
+            arg = 'evidences[' + str(i) + '][file]=' + quote(evidence['file'])
             evidencePayload.append(arg)
             if not evidence['name'] == None:
                 arg = 'evidences[' + str(i) + '][name]=' + evidence['name']
@@ -593,6 +602,11 @@ def claim_badge(request, badge_id):
     except HttpClientError as error:
         print error
         pass
+
+    print result.text
+
+# HTTP DEBUG: UNCOMMENT TO SEE HTTP REQUEST/RESPONSES WRITTEN TO THE CONSOLE
+#    http_client.HTTPConnection.debuglevel = oldval
 
     return json_response(res, {
         'result': result.text
