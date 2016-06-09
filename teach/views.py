@@ -146,7 +146,8 @@ def json_response(res, data):
 def info_for_user(res, user):
     token, created = Token.objects.get_or_create(user=user)
     body = {
-        'username': user.username
+        'username': user.username,
+        'token': str(token)
     }
     if user.is_staff:
         body['admin_url'] = '%s%s' % (settings.ORIGIN, reverse('admin:index'))
@@ -158,7 +159,7 @@ def logout(request):
     res = check_origin(request)
     if res is None:
         return HttpResponse('invalid origin', status=403)
-    res['access-control-allow-credentials'] = 'true'
+    res['Access-Control-Allow-Credentials'] = 'true'
     django.contrib.auth.logout(request)
     return json_response(res, {
         'username': None
@@ -169,7 +170,7 @@ def get_status(request):
     res = check_origin(request)
     if res is None:
         return HttpResponse('invalid origin', status=403)
-    res['access-control-allow-credentials'] = 'true'
+    res['Access-Control-Allow-Credentials'] = 'true'
     if request.user.is_authenticated():
         return info_for_user(res, request.user)
     return json_response(res, {

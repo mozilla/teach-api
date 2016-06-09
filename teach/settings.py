@@ -242,13 +242,21 @@ TEMPLATE_DIRS = (
     path('teach', 'templates'),
 )
 
-CORS_ORIGIN_ALLOW_ALL = True
+
+# Turn off blanket CORS ('*') in favour of whitelisting.
+CORS_ORIGIN_ALLOW_ALL = False
+
+# Only process CORS on the following paths requested by clients.
 CORS_URLS_REGEX = r'^(/api/).*$'
 
-CORS_API_LOGIN_ORIGINS = os.environ.get(
-    'CORS_API_LOGIN_ORIGINS',
-    ''
-).split(',')
+# When CORS kicks in, only allow origins matching the sites in the whitelist:
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', 'localhost:8008').split(',')
+
+# Allow credentials for CORS-controlled routes.
+CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_API_LOGIN_ORIGINS = os.environ.get('CORS_API_LOGIN_ORIGINS', '').split(',')
 
 LOGIN_URL = 'teach.views.oauth2_authorize'
 

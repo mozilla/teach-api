@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from rest_framework import serializers, viewsets, permissions
 
-from .models import Club
+from models import Club
 from . import email
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -59,8 +59,10 @@ class ClubViewSet(viewsets.ModelViewSet):
 
     queryset = Club.objects.filter(is_active=True)
     serializer_class = ClubSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    )
 
     def get_queryset(self):
         q = Q(status=Club.APPROVED)
