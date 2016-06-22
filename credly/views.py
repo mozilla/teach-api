@@ -10,6 +10,8 @@ import slumber
 from slumber.exceptions import HttpClientError, HttpNotFoundError
 from django.conf import settings
 
+from urllib import quote
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -578,7 +580,7 @@ def claim_badge(request, badge_id):
         # it, so we do a custom transform:
         evidencePayload = []
         for i, evidence in enumerate(evidences):
-            arg = 'evidences[' + str(i) + '][file]=' + evidence['file']
+            arg = 'evidences[' + str(i) + '][file]=' + quote(evidence['file'])
             evidencePayload.append(arg)
             if not evidence['name'] == None:
                 arg = 'evidences[' + str(i) + '][name]=' + evidence['name']
