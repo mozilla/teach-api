@@ -33,23 +33,13 @@ class Club(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    '''
+        "Page 1" general values
+    '''
+
     owner = models.ForeignKey(
         User,
         help_text="The user who owns the Club and can change it."
-    )
-
-    name = models.CharField(
-        help_text="The name of the club.",
-        max_length=100
-    )
-
-    website = models.URLField(
-        help_text="The URL of the club's primary website.",
-        blank=True
-    )
-
-    description = models.TextField(
-        help_text="Description of the club."
     )
 
     location = models.CharField(
@@ -70,6 +60,115 @@ class Club(models.Model):
         blank=True,
         null=True
     )
+
+    occupation = models.CharField(
+        help_text=("Club captain's occupation."),
+        blank=False,
+        null=True,
+        max_length=500
+    )
+
+    regional_coordinate = models.CharField(
+        help_text=("Regional Coordinator associated with club captain."),
+        blank=True,
+        null=True,
+        max_length=500
+    )
+
+    hosting_reason = models.TextField(
+        help_text=("Reason to host a Mozilla club."),
+        blank=False,
+        null=True
+    )
+
+    how_they_heard = models.CharField(
+        help_text="How did the applicant hear about Current approval status of the club.",
+        blank=False,
+        null=True,
+        max_length=100
+    )
+
+
+    '''
+        "Page 2" club-specific values
+    '''
+
+    name = models.CharField(
+        help_text="The name of the club.",
+        max_length=100
+    )
+
+    description = models.TextField(
+        help_text="Description of the club.",
+        blank=False,
+        null=False
+    )
+
+    venue = models.CharField(
+        help_text="Where does this club meet.",
+        blank=False,
+        null=True,
+        max_length=1000
+    )
+
+    # this is a range, and possibly "other" as user-supplied
+    # information. As such, this is a text field.
+    frequency = models.CharField(
+        help_text=("How frequently this club meets."),
+        blank=False,
+        null=True,
+        max_length=500
+    )
+
+    age_range = models.CharField(
+        help_text=("The club member age range."),
+        blank=False,
+        null=True,
+        max_length=500
+    )
+
+    club_size = models.CharField(
+        help_text=("The number of club members."),
+        blank=False,
+        null=True,
+        max_length=500
+    )
+
+    member_occupation = models.CharField(
+        help_text=("Club member occupations."),
+        blank=False,
+        null=True,
+        max_length=1000
+    )
+
+    club_topics = models.CharField(
+        help_text=("Club topics/subjects."),
+        blank=False,
+        null=True,
+        max_length=1000
+    )
+
+    '''
+      Optional application values
+    '''
+
+    affiliation = models.CharField(
+        help_text="The affiliated institution or organization.",
+        blank=True,
+        null=True,
+        max_length=1000
+    )
+
+    website = models.URLField(
+        help_text="The URL of the club's primary website.",
+        blank=True,
+        null=True,
+        max_length=500
+    )
+
+    '''
+      Administrative values
+    '''
 
     status = models.CharField(
         help_text="Current approval status of the club.",
