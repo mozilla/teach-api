@@ -146,7 +146,8 @@ def json_response(res, data):
 def info_for_user(res, user):
     token, created = Token.objects.get_or_create(user=user)
     body = {
-        'username': user.username
+        'username': user.username,
+        'token': token.key
     }
     if user.is_staff:
         body['admin_url'] = '%s%s' % (settings.ORIGIN, reverse('admin:index'))
