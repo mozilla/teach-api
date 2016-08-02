@@ -37,11 +37,11 @@ python manage.py runserver 0.0.0.0:8000
 
 You can then access the server from the host machine on the VM's IP address. For example, if the VM has an IP `192.168.1.1`, the host machine can access the teach-api via `http://192.168.1.1:8000`
 
-## Making a "staff" account, to use the `http://localhost:8000/admin` route
+## Making a "staff" account, to use the admin route
 
 In order to use the admin route, you will need to clear a user account by ensuring `is_staff = 1`. If the webmaker login username that you want to use is the same as the administrative user, you're done. Otherwise, after signing in with your webmaker user account once, connect to the `db.sqlite3` database file in the root directory ([SQLite Manager](https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/) for Firefox is highly recommended for working with Sqlite files), and in the `auth_users` table, update the record for your webmaker account such that `is_staff` has the value `1`.
 
-You should now be able to load up the administrative view for the teach-api via http://localhost:8000/admin
+You should now be able to load up the administrative view for the teach-api via [http://localhost:8000/admin](http://localhost:8000/admin)
 
 ## Environment Variables
 
