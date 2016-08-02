@@ -243,8 +243,13 @@ TEMPLATE_DIRS = (
     path('teach', 'templates'),
 )
 
+# don't lock down all possible routes by default
 CORS_ORIGIN_ALLOW_ALL = True
+
+# do lock down the /api/ routes (for write verbs),
+# provisioned so that credentials are checked.
 CORS_URLS_REGEX = r'^(/api/).*$'
+CORS_ALLOW_CREDENTIALS  = True
 
 CORS_API_LOGIN_ORIGINS = os.environ.get(
     'CORS_API_LOGIN_ORIGINS',

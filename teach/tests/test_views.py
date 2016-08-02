@@ -46,7 +46,7 @@ class CorsTests(TestCase):
     def test_api_paths_have_cors_enabled(self):
         c = Client()
         response = c.get('/api/', HTTP_ORIGIN='http://foo.org')
-        self.assertEqual(response['access-control-allow-origin'], '*')
+        self.assertEqual(response['access-control-allow-origin'], 'http://foo.org')
 
     def test_non_api_paths_have_cors_disabled(self):
         c = Client()
