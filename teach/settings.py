@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'clubs',
+    'clubs_guides',
     'groups',
     'credly'
 )
