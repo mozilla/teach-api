@@ -34,14 +34,25 @@ class ClubViewSetTests(ClubTestCase):
         self.assertEqual(response.data, [{
             'url': 'http://testserver/api/clubs/1/',
             'owner': 'user1',
-            'name': 'my club',
-            'website': 'http://myclub.org/',
-            'description': 'This is my club.',
             'location': 'Somewhere',
-            'latitude': 5,
-            'longitude': 6,
+            'latitude': 5.0,
+            'longitude': 6.0,
+            'occupation': None,
+            'regional_coordinator': None,
+            'hosting_reason': None,
+            'how_they_heard': None,
+            'name': 'my club',
+            'description': 'This is my club.',
+            'venue': None,
+            'frequency': None,
+            'age_range': None,
+            'club_size': None,
+            'member_occupation': None,
+            'club_topics': None,
+            'affiliation': None,
+            'website': 'http://myclub.org/',
             'status': 'approved',
-            'denial': 'approved'            
+            'denial': 'approved'
         }])
 
     def create_club(self):

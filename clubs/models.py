@@ -68,7 +68,7 @@ class Club(models.Model):
         max_length=500
     )
 
-    regional_coordinate = models.CharField(
+    regional_coordinator = models.CharField(
         help_text=("Regional Coordinator associated with club captain."),
         blank=True,
         null=True,
@@ -92,6 +92,12 @@ class Club(models.Model):
     '''
         "Page 2" club-specific values
     '''
+
+    intent = models.CharField(
+        help_text="Is this for starting a new club or connecting an existing club?",
+        max_length=100,
+        default="start"
+    )
 
     name = models.CharField(
         help_text="The name of the club.",
