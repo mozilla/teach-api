@@ -48,7 +48,7 @@ IDAPI_CLIENT_SECRET = os.environ.get('IDAPI_CLIENT_SECRET')
 LOGINAPI_URL = os.environ.get('LOGINAPI_URL', 'https://login.webmaker.org')
 LOGINAPI_AUTH = os.environ.get('LOGINAPI_AUTH')
 
-TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL', 'https://teach.mozilla.org')
+TEACH_SITE_URL = os.environ.get('TEACH_SITE_URL', 'https://learning.mozilla.org')
 
 DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET')
 DISCOURSE_SSO_ORIGIN = os.environ.get('DISCOURSE_SSO_ORIGIN')
