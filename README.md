@@ -39,7 +39,7 @@ You can then access the server from the host machine on the VM's IP address. For
 
 ## Making a "staff" account, to use the admin route
 
-In order to use the admin route, you will need to clear a user account by ensuring `is_staff = 1`. If the webmaker login username that you want to use is the same as the administrative user, you're done. Otherwise, after signing in with your webmaker user account once, connect to the `db.sqlite3` database file in the root directory ([SQLite Manager](https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/) for Firefox is highly recommended for working with Sqlite files), and in the `auth_users` table, update the record for your webmaker account such that `is_staff` has the value `1`.
+In order to use the admin route, you will need to clear a user account by ensuring `is_staff = 1`. If the webmaker login username that you want to use is the same as the administrative user, you're done. Otherwise, after signing in with your webmaker user account once, connect to the `db.sqlite3` database file in the teach-api root directory with a sqlite3 CLI or GUI ([SQLite Manager](https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/) for Firefox is highly recommended for working with Sqlite files), and update the `auth_users` table, by setting the user record associated with your webmaker account to have `is_staff` set to `1` rather than `0`.
 
 You should now be able to load up the administrative view for the teach-api via [http://localhost:8000/admin](http://localhost:8000/admin) when logged in with your webmaker account.
 
