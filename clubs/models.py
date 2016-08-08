@@ -185,7 +185,7 @@ class Club(models.Model):
 
     denial = models.CharField(
         help_text="Reason for denial, if denied.",
-        max_length=10,
+        max_length=50,
         choices=DENIAL_CHOICES,
         default=PENDING
     )
