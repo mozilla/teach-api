@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import ClubsGuide, Category
+
+
+admin.site.register(ClubsGuide)
+
+admin.site.register(Category)
