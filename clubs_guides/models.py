@@ -1,22 +1,36 @@
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
+class CategoryQuerySet(models.query.QuerySet):
+    """
+    A custom queryset class for Category
+    """
+    def collate_clubs_guides(self):
+        return self.prefetch_related(
+            models.Prefetch(
+                "clubs_guides",
+                queryset=ClubsGuide.objects.filter(
+                    translation_of__isnull=True
+                )
+            )
+        )
+
+
 class Category(models.Model):
     """
     Category a Mozilla Club's resource guide belongs to
     """
     name = models.CharField(max_length=200)
 
+    objects = CategoryQuerySet.as_manager()
+
     class Meta:
         verbose_name_plural = "categories"
 
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return unicode(self.name)
 
 
-@python_2_unicode_compatible
 class ClubsGuide(models.Model):
     """
     Resource guides for Mozilla Clubs
@@ -50,5 +64,5 @@ class ClubsGuide(models.Model):
         null=True,
     )
 
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return unicode(self.title)

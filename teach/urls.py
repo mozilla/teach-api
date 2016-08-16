@@ -27,7 +27,8 @@ urlpatterns = [
     url(r'', include('django_browserid.urls')),
     url(r'^admin/', include(teach_admin.urls)),
 
-    url(r'^credly/', include('credly.urls'))
+    url(r'^credly/', include('credly.urls')),
+    url(r'^api/clubsguides/', include('clubs_guides.urls')),
 ]
 
 if settings.IDAPI_ENABLE_FAKE_OAUTH2:
