@@ -5,9 +5,9 @@ CREATE_MAIL_BODY = """\
 
 Thanks for your interest in teaching the web! We are thrilled that you have taken the first step in your journey to becoming a Mozilla Club Captain.
 
-In order to better understand your plans and needs for your club, we'd like to know more about you. Please provide brief answers (2-3 sentences) to the questions in this survey http://bit.ly/1MP9BzB. Your answers will help us in the process of reviewing/approving your submission on the Mozilla Clubs map. Note, it is mandatory to complete and return these questions in order to proceed to the next step.
+Once your application is approved, a member of our team will get in touch with you to confirm that your club has been approved.
 
-We look forward to hearing from you! You can tweet to us @mozteach or using hashtag #teachtheweb if you need any help.
+If you have any questions you can send an email to teachtheweb@mozillafoundation.org, tweet @MozLearn or using hashtag #teachtheweb.
 
 Mozilla Clubs team
 """
