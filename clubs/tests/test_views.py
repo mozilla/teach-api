@@ -15,6 +15,7 @@ class ClubTestCase(TestCase):
 
         club = Club(
             owner=self.user1,
+            full_name='my full name',
             name='my club',
             website='http://myclub.org/',
             description='This is my club.',
@@ -34,6 +35,7 @@ class ClubViewSetTests(ClubTestCase):
         self.assertEqual(response.data, [{
             'url': 'http://testserver/api/clubs/1/',
             'owner': 'user1',
+            'full_name': 'my full name',
             'location': 'Somewhere',
             'latitude': 5.0,
             'longitude': 6.0,
@@ -58,6 +60,7 @@ class ClubViewSetTests(ClubTestCase):
     def create_club(self):
         self.client.force_authenticate(user=self.user2)
         return self.client.post('/api/clubs/', {
+            'full_name': 'my full name2',
             'name': 'my club2',
             'website': 'http://myclub2.org/',
             'description': 'This is my club2.',
