@@ -42,6 +42,13 @@ class Club(models.Model):
         help_text="The user who owns the Club and can change it."
     )
 
+    full_name = models.CharField(
+        help_text="Full name for the Club captain for this club.",
+        blank=False,
+        null=True,
+        max_length=200
+    )
+
     location = models.CharField(
         help_text="Location of the club (city or country).",
         max_length=100
