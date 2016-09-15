@@ -20,7 +20,10 @@ class Category(models.Model):
     """
     Category a Mozilla Club's resource guide belongs to
     """
-    name = models.CharField(max_length=200)
+    name = models.CharField(
+        max_length=200,
+        verbose_name='category name',
+    )
 
     objects = CategoryQuerySet.as_manager()
 

@@ -7,6 +7,7 @@ from clubs_guides.forms import ClubsGuideForm
 @admin.register(ClubsGuide)
 class ClubsGuideAdmin(admin.ModelAdmin):
     form = ClubsGuideForm
+    list_filter = ("category__name", "language",)
 
     def get_form(self, request, obj=None, **kwargs):
         kwargs["form"] = ClubsGuideForm
