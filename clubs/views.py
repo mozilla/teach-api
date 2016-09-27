@@ -40,6 +40,7 @@ class ClubSerializer(serializers.HyperlinkedModelSerializer):
             'hosting_reason',
             'how_they_heard',
 
+            'intent',
             'name',
             'description',
             'venue',
