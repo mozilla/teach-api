@@ -43,6 +43,7 @@ class ClubViewSetTests(ClubTestCase):
             'regional_coordinator': None,
             'hosting_reason': None,
             'how_they_heard': None,
+            'intent': 'start',
             'name': 'my club',
             'description': 'This is my club.',
             'venue': None,
