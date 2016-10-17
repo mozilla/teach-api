@@ -102,9 +102,10 @@ def check_OPTIONS(request, res):
 '''
   FIXME: TODO: this is repeated from teach/views.py -> refactor
 '''
-def json_response(res, data):
+def json_response(res, data, status_code=200):
     res['content-type'] = 'application/json'
     res.content = json.dumps(data)
+    res.status_code = status_code
     return res
 
 
@@ -592,10 +593,16 @@ def claim_badge(request, badge_id):
         url = CREDLY_API_URL + 'me/claimable_badges/claim/' + badge_id
         result = requests.post(url, params=params, headers=headers, data=data)
 
+        if result.status_code is not 200:
+            print "failed to POST a badge claim to Credly:"
+            print url, params, headers, data
+            print "Result:"
+            print result.text
+
     except HttpClientError as error:
         print error
         pass
 
     return json_response(res, {
         'result': result.text
-    })
+    }, result.status_code)

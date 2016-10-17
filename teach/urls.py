@@ -15,6 +15,7 @@ router.register(r'clubs', ClubViewSet)
 urlpatterns = [
     url(r'^auth/persona$', 'teach.views.persona_assertion_to_api_token'),
     url(r'^auth/status$', 'teach.views.get_status'),
+    url(r'^auth/email$', 'teach.views.get_email'),
     url(r'^auth/logout$', 'teach.views.logout'),
 
     url(r'^auth/oauth2/authorize$', 'teach.views.oauth2_authorize'),

@@ -153,6 +153,12 @@ def info_for_user(res, user):
         body['admin_url'] = '%s%s' % (settings.ORIGIN, reverse('admin:index'))
     return json_response(res, body)
 
+def email_for_user(res, user):
+    body = {
+        'email': user.email,
+    }
+    return json_response(res, body)
+
 @require_POST
 @csrf_exempt
 def logout(request):
@@ -175,6 +181,18 @@ def get_status(request):
         return info_for_user(res, request.user)
     return json_response(res, {
         'username': None
+    })
+
+@require_GET
+def get_email(request):
+    res = check_origin(request)
+    if res is None:
+        return HttpResponse('invalid origin', status=403)
+    res['access-control-allow-credentials'] = 'true'
+    if request.user.is_authenticated():
+        return email_for_user(res, request.user)
+    return json_response(res, {
+        'email': None
     })
 
 @require_POST
