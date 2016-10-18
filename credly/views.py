@@ -346,10 +346,16 @@ def get_mozilla_badges(credly=None, access_token=None):
     if not access_token:
         credly = get_our_credly()
         access_token = get_our_access_token()
-        verbose = 0
         show_earned = 0
-    list_result = credly.members(MozillaAccountId).badges.created.get(verbose=1, show_earned=1, access_token=access_token)
-    return list_result['data']
+
+    headers = XAPIHeaders()
+    headers['X-Allow-HTML'] = 1
+    auth = credlyAuth()
+    url = CREDLY_API_URL + 'members/' + str(MozillaAccountId) + '/badges/created?verbose=1&show_earned=' + str(show_earned) + '&access_token=' + str(access_token)
+    result = requests.get(url, headers=headers, auth=auth)
+    response = json.loads(result.text)
+
+    return response['data']
 
 
 # ------------------------------------------------------
