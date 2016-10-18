@@ -531,7 +531,15 @@ def badge(request, badge_id):
     user_badge_ids = []
     if user_badges:
       user_badge_ids = [n['badge_id'] for n in user_badges]
-    earned = int(badge_id) in user_badge_ids
+
+    # see if this badge has been earned by this user
+    bid = int(badge_id)
+    earned = bid in user_badge_ids
+    if earned:
+      for badge in user_badges:
+        if badge['badge']['id'] == bid:
+          earned = badge['issued_at']
+          break
 
     # get the user's pending badges
     pending = False
@@ -539,7 +547,7 @@ def badge(request, badge_id):
     if not moz_pending == None:
       user_data = get_member_data(credly, user)
       pending_ids = [n['badge_id'] for n in moz_pending if n['member_id'] == user_data['id']]
-      pending = int(badge_id) in pending_ids
+      pending = bid in pending_ids
 
     return json_response(res, {
         'username': user.username,
