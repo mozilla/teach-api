@@ -351,7 +351,12 @@ def get_mozilla_badges(credly=None, access_token=None):
     headers = XAPIHeaders()
     headers['X-Allow-HTML'] = 1
     auth = credlyAuth()
-    url = CREDLY_API_URL + 'members/' + str(MozillaAccountId) + '/badges/created?verbose=1&show_earned=' + str(show_earned) + '&access_token=' + str(access_token)
+    url = '&'.join([
+      CREDLY_API_URL + 'members/' + str(MozillaAccountId) + '/badges/created?verbose=1',
+      'show_earned=' + str(show_earned) ,
+      'access_token=' + str(access_token),
+      'per_page=9999'
+    ])
     result = requests.get(url, headers=headers, auth=auth)
     response = json.loads(result.text)
 
@@ -449,18 +454,20 @@ def badgelist(request):
     # get the mozilla badges
     access_token = get_access_token(user.id);
 
+    # check this result to see if there are "more pages" to fetch...
     moz_badges = get_mozilla_badges(credly, access_token)
-    moz_badge_ids = [n['id'] for n in moz_badges]
 
+    # if an anonymous user requested the list, we are now done.
     if not hasattr(user, 'email') or not access_token:
         return json_response(res, {
             'badges': moz_badges
         })
 
-    # shortlist the earned badges by this user
+    # if an authenticated user requested this list, do a
+    # cross-reference of the list with the user's earned badges.
     earned_ids = [n['id'] for n in moz_badges if not n['member_badge_id'] == None]
 
-    # get the user's pending badges
+    # get the user's "pending" badges in this set
     pending_ids = []
     moz_pending = get_pending_badges()
     if not moz_pending == None:
